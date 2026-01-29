@@ -48,6 +48,9 @@ export abstract class BaseAgent {
   /** Last tick the agent was executed */
   private _lastTick = -1;
 
+  /** Counter for deterministic action ID generation */
+  private _actionCounter = 0;
+
   constructor(id: string, params: Record<string, unknown> = {}) {
     this.id = id;
     this.type = this.constructor.name;
@@ -156,10 +159,10 @@ export abstract class BaseAgent {
    * Generate a unique action ID
    * @param actionName - The name of the action
    * @param tick - The current tick number
-   * @returns A unique identifier for the action
+   * @returns A unique identifier for the action (deterministic)
    */
   protected generateActionId(actionName: string, tick: number): string {
-    return `${this.id}-${actionName}-${tick}-${Date.now()}`;
+    return `${this.id}-${actionName}-${tick}-${this._actionCounter++}`;
   }
 
   // Memory management

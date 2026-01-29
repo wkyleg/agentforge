@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  Stress-test your smart contracts before mainnet.
+  <strong>AgentForge is a Foundry-native framework for adversarial, agent-based simulation of EVM mechanisms over time.</strong>
 </p>
 
 <p align="center">
@@ -20,11 +20,34 @@
 
 > **Note**: AgentForge is currently in alpha. APIs may change and you may encounter bugs.
 
-AgentForge is an agent-based simulation framework for Foundry/EVM protocols. Define autonomous agents, run them against your smart contracts, and validate economic invariants with deterministic, reproducible results.
+## What It Complements
 
-## Why Agent-Based Testing?
+| Layer | Tests | Example |
+|-------|-------|---------|
+| Unit tests | Individual functions | `test_transfer()` |
+| Fuzz tests | Random inputs | `testFuzz_transfer(uint256 amount)` |
+| **AgentForge** | **Multi-actor emergent behavior** | **Traders, arbitrageurs, liquidators competing** |
+| Mainnet | Real users | Production |
 
-Unit tests validate functions. Fuzz tests validate inputs. Agent-based modeling validates **emergent behavior**—how your protocol behaves when many users act simultaneously with different strategies.
+AgentForge fills the gap between isolated tests and production by simulating how your protocol behaves when many autonomous agents act simultaneously with different strategies over time.
+
+## What You Get
+
+Each simulation run produces durable artifacts:
+
+```
+results/<scenario>-<timestamp>/
+├── summary.json          # Run metadata, final metrics, assertion results
+├── metrics.csv           # Time-series data for analysis
+├── actions.ndjson        # Complete action log
+├── config_resolved.json  # Resolved configuration for reproducibility
+└── report.md             # Generated report (optional)
+```
+
+Plus reporting commands:
+- `forge-sim report <runDir>` — Generate a Markdown report
+- `forge-sim compare <runA> <runB>` — Diff two runs
+- `forge-sim sweep <scenario> --seeds 1..50` — Multi-seed statistical analysis
 
 ## Installation
 
@@ -38,16 +61,20 @@ Requirements: Node.js 18+ and [Foundry](https://book.getfoundry.sh/getting-start
 
 ```bash
 # Initialize project structure
-npx agentforge init
+npx forge-sim init
 
 # Run built-in toy scenario to verify setup
-npx agentforge run --toy
+npx forge-sim run --toy
 
 # Check environment
-npx agentforge doctor
+npx forge-sim doctor
 ```
 
-## Writing a Scenario
+## Core Concepts
+
+### Scenarios
+
+A scenario defines simulation parameters: seed, duration, agents, and assertions.
 
 ```typescript
 import { defineScenario } from '@elata-biosciences/agentforge';
@@ -76,15 +103,9 @@ export default defineScenario({
 });
 ```
 
-Run it:
+### Agents
 
-```bash
-npx agentforge run sim/scenarios/market-stress.ts
-```
-
-## Writing an Agent
-
-Extend `BaseAgent` and implement `step()`:
+Agents are autonomous actors that observe state and decide actions each tick.
 
 ```typescript
 import { BaseAgent, type Action, type TickContext } from '@elata-biosciences/agentforge';
@@ -105,74 +126,130 @@ export class MyAgent extends BaseAgent {
 ```
 
 Agents have access to:
-
 - `ctx.rng` — Deterministic random number generator
+- `ctx.world` — Current protocol state
 - `this.remember()` / `this.recall()` — Persist state across ticks
 - `this.setCooldown()` / `this.isOnCooldown()` — Rate-limit actions
-- `this.getParam()` — Access scenario-defined parameters
 
-## CLI
+### Packs
 
-```bash
-agentforge init [path]          # Initialize simulation folder
-agentforge run <scenario>       # Execute a scenario
-agentforge run --toy            # Run built-in demo
-agentforge doctor               # Check dependencies
-agentforge types                # Generate types from Foundry artifacts
-```
+Packs are protocol adapters that set up blockchain state and handle contract interactions.
 
-Options for `run`:
+### Determinism
+
+Same seed + same scenario = identical results. All randomness derives from seeded RNG.
 
 ```bash
---seed <n>      # Override random seed
---ticks <n>     # Override tick count
---out <dir>     # Output directory
---ci            # CI mode (no colors)
---verbose       # Verbose logging
+# Verify determinism
+forge-sim run --toy --seed 123 --out run1 --ci
+forge-sim run --toy --seed 123 --out run2 --ci
+forge-sim compare run1/toy-market-ci run2/toy-market-ci
+# Should report identical artifact hashes
 ```
 
-## Output
+## Mechanism Experiments
 
-Each run produces:
+AgentForge is particularly useful for stress-testing mechanism designs. See `examples/mechanism-experiments/` for runnable examples:
 
+### Ordering Policy Experiments
+
+Explore how transaction ordering affects value capture and leakage:
+
+```bash
+cd examples/mechanism-experiments/ordering-tax
+npx forge-sim run scenario.ts --seed 42
 ```
-results/<scenario>-<timestamp>/
-├── summary.json          # Metadata, metrics, assertion results
-├── metrics.csv           # Time-series data
-├── actions.ndjson        # Action log
-└── config_resolved.json  # Resolved configuration
+
+Questions it helps answer:
+- How does priority ordering vs. random ordering affect searcher profits?
+- What is the user slippage distribution under different ordering regimes?
+- How do tail outcomes change across ordering policies?
+
+### Timing Advantage Experiments
+
+Analyze how information timing affects auction outcomes:
+
+```bash
+cd examples/mechanism-experiments/timing-auction
+npx forge-sim run scenario.ts --seed 42
 ```
 
-## Core Concepts
+Questions it helps answer:
+- How much advantage does a "fast actor" gain from late information?
+- Does commit-reveal mitigate timing advantages?
+- What is the impact on seller revenue and bidder participation?
 
-**Scenarios** define simulation parameters: seed, duration, agents, and assertions.
+## Reporting
 
-**Packs** are protocol adapters that set up blockchain state and handle contract interactions.
+### Generate a Report
 
-**Agents** are autonomous actors that observe state and decide actions each tick.
+```bash
+forge-sim report sim/results/stress-ci
+```
 
-**Determinism**: Same seed + same scenario = identical results. All randomness derives from seeded RNG.
+Produces `report.md` with run metadata, KPI summary, time-series statistics, action analysis, and determinism fingerprint.
 
-## Examples
+### Compare Runs
 
-### DeFi Protocol Testing
-The `basic-simulation/` example shows how to simulate trading activity and validate market invariants.
+```bash
+forge-sim compare baseline/stress-ci current/stress-ci
+```
 
-### Custom Agent Strategies
-The `custom-agent/` example demonstrates memory, cooldowns, and complex decision logic.
+Produces `compare.md` with metadata diff, KPI deltas, and behavioral changes.
 
-See [examples/](examples/) for all working code including `assertions/` and `metrics-tracking/`.
+### Seed Sweep
+
+```bash
+forge-sim sweep sim/scenarios/stress.ts --seeds 1..50
+```
+
+Runs the scenario with 50 different seeds and produces aggregate statistics: percentiles (P05/P50/P95), tail risk analysis, and per-seed summary CSV.
 
 ## CI Integration
 
 ```yaml
 - name: Run simulations
-  run: npx agentforge run sim/scenarios/stress.ts --ci --seed 42
+  run: npx forge-sim run sim/scenarios/stress.ts --ci --seed 42
+
+- name: Upload artifacts
+  uses: actions/upload-artifact@v4
+  if: always()
+  with:
+    name: simulation-results
+    path: sim/results/
 ```
 
-Assertions fail CI on invariant violations.
+Exit codes:
+- `0` — Success (all assertions passed)
+- `1` — Assertion failure
+- `2` — Infrastructure error
 
-## API
+See [docs/ci.md](docs/ci.md) for detailed CI recipes.
+
+## CLI Reference
+
+```bash
+forge-sim init [path]              # Initialize simulation folder
+forge-sim run <scenario>           # Execute a scenario
+forge-sim run --toy                # Run built-in demo
+forge-sim report <runDir>          # Generate report from artifacts
+forge-sim compare <runA> <runB>    # Compare two runs
+forge-sim sweep <scenario>         # Multi-seed statistical run
+forge-sim doctor                   # Check dependencies
+forge-sim types                    # Generate types from Foundry artifacts
+```
+
+Options for `run`:
+```bash
+--seed <n>           # Override random seed
+--ticks <n>          # Override tick count
+--out <dir>          # Output directory
+--ci                 # CI mode (no colors, stable naming)
+--verbose            # Verbose logging
+--json               # Output results as JSON
+```
+
+## API Reference
 
 ```typescript
 // Core
@@ -185,6 +262,26 @@ import { spawnAnvil, createViemClient } from '@elata-biosciences/agentforge/adap
 // Toy simulation
 import { ToyPack, RandomTraderAgent, MomentumAgent } from '@elata-biosciences/agentforge/toy';
 ```
+
+## Documentation
+
+- [Core Concepts](docs/concepts.md) — Scenarios, agents, ticks, packs, determinism
+- [CI Integration](docs/ci.md) — GitHub Actions, GitLab CI, exit codes
+- [Reporting](docs/reporting.md) — Report, compare, and sweep commands
+
+## Examples
+
+- `examples/basic-simulation/` — Minimal setup with ToyPack
+- `examples/custom-agent/` — Memory, cooldowns, and parameterized behavior
+- `examples/assertions/` — Assertion validation patterns
+- `examples/metrics-tracking/` — CSV analysis and statistics
+- `examples/mechanism-experiments/` — Ordering and timing experiments
+
+## Roadmap
+
+- **Variant runner**: Run scenarios against multiple contract versions
+- **Replay and shrinking**: Replay specific ticks, minimize failing cases
+- **Extended ordering policies**: Custom ordering, bundle simulation
 
 ## Used By
 

@@ -107,7 +107,7 @@ export class ArtifactsWriter {
     };
 
     const path = join(this.runDir, 'summary.json');
-    await writeFile(path, JSON.stringify(summary, null, 2));
+    await writeFile(path, `${JSON.stringify(summary, null, 2)}\n`);
     this.logger?.debug({ path }, 'Wrote summary.json');
   }
 
@@ -161,7 +161,7 @@ export class ArtifactsWriter {
     };
 
     const path = join(this.runDir, 'config_resolved.json');
-    await writeFile(path, JSON.stringify(config, null, 2));
+    await writeFile(path, `${JSON.stringify(config, null, 2)}\n`);
     this.logger?.debug({ path }, 'Wrote config_resolved.json');
   }
 

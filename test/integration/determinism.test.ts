@@ -1,4 +1,5 @@
 import { exec } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -7,6 +8,45 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const execAsync = promisify(exec);
 const CLI_PATH = join(process.cwd(), 'src/cli/index.ts');
+
+/**
+ * Compute SHA256 hash of a file's contents
+ */
+async function computeFileHash(filePath: string): Promise<string> {
+  const content = await readFile(filePath, 'utf-8');
+  return createHash('sha256').update(content).digest('hex');
+}
+
+/**
+ * Compute hash of actions.ndjson normalized (ignoring wall-clock dependent fields)
+ */
+async function computeActionsHash(filePath: string): Promise<string> {
+  const content = await readFile(filePath, 'utf-8');
+  const lines = content.trim().split('\n');
+  // Normalize by removing variable fields: durationMs (execution time) and timestamp (wall-clock start)
+  const normalized = lines.map((line) => {
+    const obj = JSON.parse(line);
+    obj.durationMs = undefined;
+    obj.timestamp = undefined;
+    return JSON.stringify(obj);
+  });
+  return createHash('sha256').update(normalized.join('\n')).digest('hex');
+}
+
+/**
+ * Compute hash of config_resolved.json normalized (ignoring outDir which changes between runs)
+ */
+async function computeConfigHash(filePath: string): Promise<string> {
+  const content = await readFile(filePath, 'utf-8');
+  const config = JSON.parse(content);
+  // Remove options.outDir which changes between runs
+  if (config.options) {
+    config.options.outDir = undefined;
+  }
+  return createHash('sha256')
+    .update(JSON.stringify(config, null, 2))
+    .digest('hex');
+}
 
 describe('Simulation Determinism', () => {
   let testDir: string;
@@ -144,5 +184,90 @@ describe('Simulation Determinism', () => {
 
     const tickIndex = header?.split(',').indexOf('tick') ?? -1;
     expect(tickIndex).toBeGreaterThanOrEqual(0);
+  });
+
+  it('artifact hashes are identical across runs with same seed', async () => {
+    const seed = 77777;
+
+    // Run 1
+    await execAsync(
+      `npx tsx ${CLI_PATH} run --toy --ticks 10 --seed ${seed} --out ${join(testDir, 'hash1')} --ci`
+    );
+
+    // Run 2
+    await execAsync(
+      `npx tsx ${CLI_PATH} run --toy --ticks 10 --seed ${seed} --out ${join(testDir, 'hash2')} --ci`
+    );
+
+    const run1Dir = join(testDir, 'hash1', 'toy-market-ci');
+    const run2Dir = join(testDir, 'hash2', 'toy-market-ci');
+
+    // actions.ndjson should be identical (excluding timing fields)
+    const actionsHash1 = await computeActionsHash(join(run1Dir, 'actions.ndjson'));
+    const actionsHash2 = await computeActionsHash(join(run2Dir, 'actions.ndjson'));
+    expect(actionsHash1).toBe(actionsHash2);
+
+    // config_resolved.json should be identical (excluding outDir)
+    const configHash1 = await computeConfigHash(join(run1Dir, 'config_resolved.json'));
+    const configHash2 = await computeConfigHash(join(run2Dir, 'config_resolved.json'));
+    expect(configHash1).toBe(configHash2);
+
+    // metrics.csv should be identical (timestamps come from scenario, not wall clock)
+    const metricsHash1 = await computeFileHash(join(run1Dir, 'metrics.csv'));
+    const metricsHash2 = await computeFileHash(join(run2Dir, 'metrics.csv'));
+    expect(metricsHash1).toBe(metricsHash2);
+  });
+
+  it('action IDs are deterministic', async () => {
+    const seed = 88888;
+
+    // Run twice
+    await execAsync(
+      `npx tsx ${CLI_PATH} run --toy --ticks 5 --seed ${seed} --out ${join(testDir, 'ids1')} --ci`
+    );
+    await execAsync(
+      `npx tsx ${CLI_PATH} run --toy --ticks 5 --seed ${seed} --out ${join(testDir, 'ids2')} --ci`
+    );
+
+    // Compare action IDs
+    const actions1 = await readFile(
+      join(testDir, 'ids1', 'toy-market-ci', 'actions.ndjson'),
+      'utf-8'
+    );
+    const actions2 = await readFile(
+      join(testDir, 'ids2', 'toy-market-ci', 'actions.ndjson'),
+      'utf-8'
+    );
+
+    const ids1 = actions1
+      .trim()
+      .split('\n')
+      .map((line) => {
+        const obj = JSON.parse(line);
+        return obj.action?.id;
+      })
+      .filter(Boolean);
+
+    const ids2 = actions2
+      .trim()
+      .split('\n')
+      .map((line) => {
+        const obj = JSON.parse(line);
+        return obj.action?.id;
+      })
+      .filter(Boolean);
+
+    // Action IDs should match exactly
+    expect(ids1).toEqual(ids2);
+
+    // Verify IDs don't contain timestamps (no Date.now())
+    for (const id of ids1) {
+      // IDs should be in format: agentId-actionName-tick-counter
+      // Not: agentId-actionName-tick-timestamp (13+ digit number)
+      const parts = id.split('-');
+      const lastPart = parts[parts.length - 1];
+      // Counter should be a small number, not a timestamp
+      expect(Number(lastPart)).toBeLessThan(1000);
+    }
   });
 });

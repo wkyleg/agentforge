@@ -43,31 +43,50 @@ export const doctorCommand = new Command('doctor')
     // Check Anvil (optional)
     results.push(await checkAnvil(jsonMode));
 
-    // Check filesystem write access
+    // Check filesystem write access (temp)
     results.push(await checkFilesystem(jsonMode));
 
+    // Check sim/results write access
+    results.push(await checkSimResults(jsonMode));
+
+    // Compute summary
+    const errors = results.filter((r) => r.status === 'error' && !isOptional(r.name));
+    const warnings = results.filter((r) => r.status === 'warn');
+    const allPassed = errors.length === 0;
+
     if (jsonMode) {
-      console.log(JSON.stringify(results, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            results,
+            allPassed,
+            requiredErrors: errors.length,
+            warnings: warnings.length,
+          },
+          null,
+          2
+        )
+      );
     } else {
       output.newline();
 
       // Print summary
-      const errors = results.filter((r) => r.status === 'error');
-      const warnings = results.filter((r) => r.status === 'warn');
-
-      if (errors.length === 0) {
+      if (allPassed) {
         output.success('All required checks passed!');
         if (warnings.length > 0) {
           output.warn(`${warnings.length} optional component(s) not found`);
         }
+        output.newline();
+        output.info('Ready to run: npx forge-sim run --toy');
       } else {
         output.error(`${errors.length} required check(s) failed`);
+        output.newline();
+        output.info('Fix the errors above before running simulations');
       }
     }
 
     // Exit with appropriate code
-    const hasRequiredErrors = results.some((r) => r.status === 'error' && !isOptional(r.name));
-    process.exit(hasRequiredErrors ? 1 : 0);
+    process.exit(allPassed ? 0 : 1);
   });
 
 async function checkNodeVersion(silent = false): Promise<CheckResult> {
@@ -154,14 +173,39 @@ async function checkFilesystem(silent = false): Promise<CheckResult> {
     await access(testFile, constants.R_OK | constants.W_OK);
     await unlink(testFile);
 
-    if (!silent) output.check('Filesystem', 'ok', 'Write access OK');
-    return { name: 'Filesystem', status: 'ok', message: 'Write access OK' };
+    if (!silent) output.check('Temp directory', 'ok', 'Write access OK');
+    return { name: 'Temp directory', status: 'ok', message: 'Write access OK' };
   } catch {
-    if (!silent) output.check('Filesystem', 'error', 'Cannot write to temp directory');
+    if (!silent) output.check('Temp directory', 'error', 'Cannot write to temp directory');
     return {
-      name: 'Filesystem',
+      name: 'Temp directory',
       status: 'error',
       message: 'Cannot write to temp directory',
+    };
+  }
+}
+
+async function checkSimResults(silent = false): Promise<CheckResult> {
+  const { mkdir } = await import('node:fs/promises');
+  const resultsDir = join(process.cwd(), 'sim', 'results');
+  const testFile = join(resultsDir, `.agentforge-test-${Date.now()}.tmp`);
+
+  try {
+    // Try to create the directory if it doesn't exist
+    await mkdir(resultsDir, { recursive: true });
+
+    // Test write access
+    await writeFile(testFile, 'test');
+    await unlink(testFile);
+
+    if (!silent) output.check('sim/results', 'ok', 'Write access OK');
+    return { name: 'sim/results', status: 'ok', message: 'Write access OK' };
+  } catch {
+    if (!silent) output.check('sim/results', 'warn', 'Cannot write to sim/results (will use temp)');
+    return {
+      name: 'sim/results',
+      status: 'warn',
+      message: 'Cannot write to sim/results',
     };
   }
 }

@@ -185,7 +185,7 @@ describe('SimulationEngine', () => {
     it('executes actions through pack', async () => {
       const activeAgent = createActiveAgent('active', 'buy');
 
-      const scenario = defineScenario({
+      const _scenario = defineScenario({
         name: 'action-test',
         seed: 1,
         ticks: 2,

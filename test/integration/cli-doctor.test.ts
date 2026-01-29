@@ -8,7 +8,7 @@ const CLI_PATH = join(process.cwd(), 'src', 'cli', 'index.ts');
 
 describe('CLI: forge-sim doctor', () => {
   it('exits with code 0 when environment is valid', async () => {
-    const { stdout, stderr } = await execAsync(`npx tsx ${CLI_PATH} doctor`);
+    const { stdout } = await execAsync(`npx tsx ${CLI_PATH} doctor`);
 
     // Should contain Node.js check
     expect(stdout).toContain('Node.js');
@@ -67,7 +67,7 @@ describe('CLI: forge-sim doctor', () => {
     const jsonMatch = stdout.match(/\[[\s\S]*\]/);
     const results = JSON.parse(jsonMatch?.[0]);
 
-    const fsCheck = results.find((r: { name: string }) => r.name === 'Filesystem');
+    const fsCheck = results.find((r: { name: string }) => r.name === 'Temp directory');
     expect(fsCheck).toBeDefined();
     expect(fsCheck.status).toBe('ok');
   });

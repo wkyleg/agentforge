@@ -20,7 +20,9 @@ export const runCommand = new Command('run')
   .option('-t, --ticks <number>', 'Number of ticks to simulate', Number.parseInt)
   .option('--tick-seconds <number>', 'Simulated seconds per tick', Number.parseInt)
   .option('-o, --out <path>', 'Output directory', 'sim/results')
+  .option('--output-path <path>', 'Exact output path (overrides --out, useful for CI)')
   .option('--ci', 'CI mode (no colors, strict exit codes)')
+  .option('--summary', 'Print one-line summary (useful for CI logs)')
   .option('-v, --verbose', 'Verbose output')
   .option('--fork-url <url>', 'Fork from a network URL (for EVM simulations)')
   .option('--snapshot-every <number>', 'Create snapshots every N ticks', Number.parseInt)
@@ -92,11 +94,14 @@ export const runCommand = new Command('run')
       }
 
       // Build run options
+      // --output-path takes precedence over --out for exact path control in CI
+      const outDir = options.outputPath ? dirname(options.outputPath) : options.out;
+
       const runOptions: RunOptions = {
         seed: options.seed,
         ticks: options.ticks,
         tickSeconds: options.tickSeconds,
-        outDir: options.out,
+        outDir,
         ci,
         verbose: options.verbose,
       };
@@ -134,9 +139,34 @@ export const runCommand = new Command('run')
     }
 
     /**
+     * Print one-line summary for CI logs
+     */
+    function printSummary(result: RunResult): void {
+      const status = result.success ? 'PASS' : 'FAIL';
+      const failedCount = result.failedAssertions.length;
+      const totalActions = result.agentStats.reduce((sum, s) => sum + s.actionsAttempted, 0);
+      const successActions = result.agentStats.reduce((sum, s) => sum + s.actionsSucceeded, 0);
+      const successRate =
+        totalActions > 0 ? Math.round((successActions / totalActions) * 100) : 100;
+
+      // One-line format: STATUS scenario seed=X ticks=Y duration=Zms actions=N/M (P%) [failed=F]
+      let line = `${status} ${result.scenarioName} seed=${result.seed} ticks=${result.ticks} duration=${result.durationMs}ms actions=${successActions}/${totalActions} (${successRate}%)`;
+      if (failedCount > 0) {
+        line += ` failed_assertions=${failedCount}`;
+      }
+      console.log(line);
+    }
+
+    /**
      * Print human-readable results
      */
     function printResults(result: RunResult): void {
+      // If --summary flag, just print one line
+      if (options.summary) {
+        printSummary(result);
+        return;
+      }
+
       output.newline();
       output.header('Results');
       output.newline();

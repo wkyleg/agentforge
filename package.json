@@ -1,6 +1,6 @@
 {
   "name": "@elata-biosciences/agentforge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Type-safe agent-based simulation framework for Foundry/EVM protocols",
   "type": "module",
   "main": "./dist/index.js",

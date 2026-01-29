@@ -169,8 +169,8 @@ describe('CLI: forge-sim run --toy', () => {
 
     // Results should differ (very unlikely to be identical with different seeds)
     // Check some metric that varies
-    const metric1 = summary1.finalMetrics.totalVolume;
-    const metric2 = summary2.finalMetrics.totalVolume;
+    const _metric1 = summary1.finalMetrics.totalVolume;
+    const _metric2 = summary2.finalMetrics.totalVolume;
 
     // They could theoretically be equal, but very unlikely with 20 ticks
     // We just verify the runs completed

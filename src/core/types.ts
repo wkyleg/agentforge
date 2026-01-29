@@ -208,6 +208,12 @@ export interface Scenario {
   metrics?: MetricsConfig;
   /** Optional assertions to validate at the end */
   assertions?: Assertion[];
+  /** Probes for custom metric sampling */
+  probes?: ProbeConfig[];
+  /** Sample probes every N ticks (default: same as metrics) */
+  probeEveryTicks?: number;
+  /** Checkpoint configuration */
+  checkpoints?: CheckpointConfig;
 }
 
 /**
@@ -233,6 +239,60 @@ export interface MetricsConfig {
   sampleEveryTicks: number;
   /** Specific metrics to track */
   track?: string[];
+}
+
+/**
+ * Probe configuration for custom metric sampling
+ */
+export interface ProbeConfig {
+  /** Unique name for this probe */
+  name: string;
+  /** Probe type */
+  type: 'call' | 'balance' | 'computed';
+  /** Probe-specific configuration */
+  config: ProbeCallConfig | ProbeBalanceConfig | ProbeComputedConfig;
+}
+
+/**
+ * Call probe - execute a view function
+ */
+export interface ProbeCallConfig {
+  /** Contract address or role identifier */
+  target: string;
+  /** Function name or selector */
+  method: string;
+  /** Arguments to pass */
+  args?: unknown[];
+}
+
+/**
+ * Balance probe - track token/ETH balances
+ */
+export interface ProbeBalanceConfig {
+  /** Token address (omit for native ETH) */
+  token?: string;
+  /** Addresses or role identifiers to track */
+  addresses: string[];
+}
+
+/**
+ * Computed probe - derive from other probes or pack state
+ */
+export interface ProbeComputedConfig {
+  /** Function to compute the probe value */
+  compute: (pack: Pack, probeValues: Record<string, unknown>) => number | bigint | string;
+}
+
+/**
+ * Checkpoint configuration
+ */
+export interface CheckpointConfig {
+  /** Create checkpoints every N ticks */
+  everyTicks: number;
+  /** Include agent memory in checkpoints */
+  includeAgentMemory?: boolean;
+  /** Include full probe values */
+  includeProbes?: boolean;
 }
 
 /**

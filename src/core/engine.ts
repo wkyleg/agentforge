@@ -1,6 +1,12 @@
 import type { Logger } from 'pino';
 import type { BaseAgent } from './agent.js';
 import { ArtifactsWriter, generateRunId } from './artifacts.js';
+import {
+  type CheckpointWriter,
+  type ProbeSampler,
+  createCheckpointWriter,
+  createProbeSampler,
+} from './checkpoints.js';
 import { LogEvents, createLogger } from './logging.js';
 import { MetricsCollector } from './metrics.js';
 import { Rng } from './rng.js';
@@ -87,6 +93,24 @@ export class SimulationEngine {
 
     await artifactsWriter.initialize();
 
+    // Initialize checkpoint writer if configured
+    let checkpointWriter: CheckpointWriter | null = null;
+    if (scenario.checkpoints) {
+      checkpointWriter = createCheckpointWriter({
+        outDir: artifactsWriter.getRunDir(),
+        config: scenario.checkpoints,
+        logger: this.logger,
+      });
+      await checkpointWriter.initialize();
+    }
+
+    // Initialize probe sampler if configured
+    let probeSampler: ProbeSampler | null = null;
+    if (scenario.probes && scenario.probes.length > 0) {
+      probeSampler = createProbeSampler(scenario.probes, this.logger);
+    }
+    const probeEveryTicks = scenario.probeEveryTicks ?? scenario.metrics?.sampleEveryTicks ?? 1;
+
     // Initialize pack
     await scenario.pack.initialize();
 
@@ -102,6 +126,8 @@ export class SimulationEngine {
 
     // Run tick loop
     let currentTimestamp = initialTimestamp;
+    let lastProbeValues: Record<string, unknown> = {};
+
     for (let tick = 0; tick < resolvedOptions.ticks; tick++) {
       await this.executeTick(
         tick,
@@ -112,6 +138,24 @@ export class SimulationEngine {
         metricsCollector,
         artifactsWriter
       );
+
+      // Sample probes at configured interval
+      if (probeSampler && tick % probeEveryTicks === 0) {
+        lastProbeValues = await probeSampler.sample(scenario.pack);
+        this.logger.debug({ tick, probes: Object.keys(lastProbeValues) }, 'Sampled probes');
+      }
+
+      // Write checkpoint at configured interval
+      if (checkpointWriter?.shouldCheckpoint(tick)) {
+        await checkpointWriter.writeCheckpoint(
+          tick,
+          currentTimestamp,
+          agents,
+          scenario.pack,
+          lastProbeValues
+        );
+      }
+
       currentTimestamp += resolvedOptions.tickSeconds;
     }
 

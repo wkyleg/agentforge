@@ -23,7 +23,7 @@ import { ToyPack } from '../../src/toy/index.js';
  * A custom agent that tracks price trends and trades accordingly
  */
 class TrendFollowerAgent extends BaseAgent {
-  async initialize(ctx: TickContext): Promise<void> {
+  async initialize(_ctx: TickContext): Promise<void> {
     // Initialize price history in memory
     this.remember('priceHistory', [] as number[]);
     this.remember('lastAction', 'none');
