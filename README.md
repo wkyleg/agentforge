@@ -18,6 +18,8 @@
 
 ---
 
+> **Note**: AgentForge is currently in alpha. APIs may change and you may encounter bugs.
+
 AgentForge is an agent-based simulation framework for Foundry/EVM protocols. Define autonomous agents, run them against your smart contracts, and validate economic invariants with deterministic, reproducible results.
 
 Traditional testing validates individual functions. Agent-based modeling validates emergent system behavior—what happens when hundreds of users interact simultaneously? Does your AMM stay solvent under volatility? How do rational actors exploit edge cases?
