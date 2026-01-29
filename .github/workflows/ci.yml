@@ -13,8 +13,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    # Allow lint to fail for alpha - style warnings don't block release
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
