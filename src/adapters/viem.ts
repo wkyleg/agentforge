@@ -55,6 +55,8 @@ export interface ContractConfig {
 
 /**
  * Create a public client for reading chain state
+ * @param config - Client configuration with RPC URL
+ * @returns A viem PublicClient instance
  */
 export function createViemPublicClient(config: ClientConfig): PublicClient {
   return createPublicClient({
@@ -65,6 +67,10 @@ export function createViemPublicClient(config: ClientConfig): PublicClient {
 
 /**
  * Create a wallet client for an agent
+ * @param config - Client configuration with RPC URL
+ * @param walletConfig - Wallet configuration with optional private key
+ * @returns Object containing wallet client, account, and private key
+ * @throws Error if no private key provided and generation disabled
  */
 export function createAgentWallet(
   config: ClientConfig,
@@ -91,8 +97,10 @@ export function createAgentWallet(
 
 /**
  * Create a contract instance
- *
- * @stub Full implementation in Phase 2
+ * @param config - Contract configuration with address and ABI
+ * @param publicClient - Public client for reading
+ * @param walletClient - Optional wallet client for writing
+ * @returns A viem contract instance
  */
 export function createContractInstance(
   config: ContractConfig,
@@ -128,6 +136,7 @@ export class ViemClientManager {
 
   /**
    * Get or create public client
+   * @returns The public client instance
    */
   getPublicClient(): PublicClient {
     if (!this.publicClient) {
@@ -141,6 +150,9 @@ export class ViemClientManager {
 
   /**
    * Get or create wallet client for an agent
+   * @param agentId - Unique identifier for the agent
+   * @param privateKey - Optional private key to use
+   * @returns The wallet client for this agent
    */
   getWalletClient(agentId: string, privateKey?: `0x${string}`): WalletClient {
     let client = this.walletClients.get(agentId);
@@ -160,6 +172,8 @@ export class ViemClientManager {
 
   /**
    * Get account for an agent
+   * @param agentId - Unique identifier for the agent
+   * @returns The account or undefined if not found
    */
   getAccount(agentId: string): Account | undefined {
     return this.accounts.get(agentId);
@@ -167,6 +181,8 @@ export class ViemClientManager {
 
   /**
    * Get agent address
+   * @param agentId - Unique identifier for the agent
+   * @returns The address or undefined if not found
    */
   getAddress(agentId: string): `0x${string}` | undefined {
     return this.accounts.get(agentId)?.address;
@@ -174,6 +190,7 @@ export class ViemClientManager {
 
   /**
    * Get all agent addresses
+   * @returns Map of agent ID to address
    */
   getAllAddresses(): Map<string, `0x${string}`> {
     const addresses = new Map<string, `0x${string}`>();
@@ -195,6 +212,8 @@ export class ViemClientManager {
 
 /**
  * Create a client manager
+ * @param config - Client configuration with RPC URL
+ * @returns A ViemClientManager instance
  */
 export function createClientManager(config: ClientConfig): ViemClientManager {
   return new ViemClientManager(config);

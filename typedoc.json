@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts", "src/toy/index.ts", "src/adapters/index.ts"],
+  "out": "docs",
+  "name": "AgentForge API",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "treatWarningsAsErrors": false,
+  "navigationLinks": {
+    "GitHub": "https://github.com/wkyleg/agentforge",
+    "npm": "https://npmjs.com/package/agentforge"
+  },
+  "plugin": [],
+  "sort": ["source-order"],
+  "visibilityFilters": {
+    "protected": false,
+    "private": false,
+    "inherited": true,
+    "external": false
+  }
+}

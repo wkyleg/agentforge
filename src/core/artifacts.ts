@@ -51,6 +51,7 @@ export class ArtifactsWriter {
 
   /**
    * Get the run directory path
+   * @returns The absolute path to the run output directory
    */
   getRunDir(): string {
     return this.runDir;
@@ -58,6 +59,7 @@ export class ArtifactsWriter {
 
   /**
    * Record an action for later writing
+   * @param action - The recorded action to store
    */
   recordAction(action: RecordedAction): void {
     this.actions.push(action);
@@ -65,6 +67,10 @@ export class ArtifactsWriter {
 
   /**
    * Write all artifacts at the end of the simulation
+   * @param scenario - The scenario that was executed
+   * @param options - The resolved run options
+   * @param result - The simulation result
+   * @param metricsCollector - The metrics collector with all samples
    */
   async writeAll(
     scenario: Scenario,
@@ -84,6 +90,7 @@ export class ArtifactsWriter {
 
   /**
    * Write the summary.json file
+   * @param result - The simulation result to write
    */
   async writeSummary(result: RunResult): Promise<void> {
     const summary = {
@@ -106,6 +113,7 @@ export class ArtifactsWriter {
 
   /**
    * Write the metrics.csv file
+   * @param metricsCollector - The metrics collector with time-series data
    */
   async writeMetrics(metricsCollector: MetricsCollector): Promise<void> {
     const csv = metricsCollector.toCSV();
@@ -126,6 +134,8 @@ export class ArtifactsWriter {
 
   /**
    * Write the config_resolved.json file
+   * @param scenario - The scenario configuration
+   * @param options - The resolved run options
    */
   async writeConfig(scenario: Scenario, options: RunOptions): Promise<void> {
     const config = {
@@ -157,6 +167,7 @@ export class ArtifactsWriter {
 
   /**
    * Append a log line to run.log
+   * @param line - The log line to append
    */
   async appendLog(line: string): Promise<void> {
     const path = join(this.runDir, 'run.log');
@@ -188,6 +199,26 @@ function serializeMetrics(
 }
 
 /**
+ * Recursively convert BigInt values to strings for JSON serialization
+ */
+function serializeBigInts(value: unknown): unknown {
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+  if (Array.isArray(value)) {
+    return value.map(serializeBigInts);
+  }
+  if (value && typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      result[k] = serializeBigInts(v);
+    }
+    return result;
+  }
+  return value;
+}
+
+/**
  * Serialize an action for JSON output
  */
 function serializeAction(action: RecordedAction): Record<string, unknown> {
@@ -200,7 +231,7 @@ function serializeAction(action: RecordedAction): Record<string, unknown> {
       ? {
           id: action.action.id,
           name: action.action.name,
-          params: action.action.params,
+          params: serializeBigInts(action.action.params),
         }
       : null,
     result: action.result
@@ -217,6 +248,9 @@ function serializeAction(action: RecordedAction): Record<string, unknown> {
 
 /**
  * Generate a unique run ID
+ * @param scenarioName - The name of the scenario
+ * @param ci - Whether running in CI mode (uses stable naming)
+ * @returns A unique identifier for this run
  */
 export function generateRunId(scenarioName: string, ci = false): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -231,6 +265,8 @@ export function generateRunId(scenarioName: string, ci = false): string {
 
 /**
  * Create an artifacts writer
+ * @param options - Configuration for the artifacts writer
+ * @returns A new ArtifactsWriter instance
  */
 export function createArtifactsWriter(options: ArtifactsWriterOptions): ArtifactsWriter {
   return new ArtifactsWriter(options);

@@ -47,6 +47,9 @@ export class SimulationEngine {
 
   /**
    * Run a simulation scenario
+   * @param scenario - The scenario to execute
+   * @param options - Optional run configuration overrides
+   * @returns The simulation result with metrics, stats, and assertion outcomes
    */
   async run(scenario: Scenario, options: RunOptions = {}): Promise<RunResult> {
     const startTime = Date.now();
@@ -393,6 +396,9 @@ export class SimulationEngine {
 
 /**
  * Convenience function to run a scenario
+ * @param scenario - The scenario to execute
+ * @param options - Optional run configuration overrides
+ * @returns The simulation result with metrics, stats, and assertion outcomes
  */
 export async function runScenario(scenario: Scenario, options?: RunOptions): Promise<RunResult> {
   const engine = new SimulationEngine();

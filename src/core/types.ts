@@ -35,9 +35,12 @@ export interface ActionResult {
 
 /**
  * An event emitted during action execution
+ * Used to track contract events, state changes, or other side effects
  */
 export interface ActionEvent {
+  /** Event name (e.g., 'Transfer', 'Approval') */
   name: string;
+  /** Event arguments/parameters */
   args: Record<string, unknown>;
 }
 
@@ -70,6 +73,71 @@ export interface WorldState {
 }
 
 /**
+ * Hex address type (0x-prefixed string)
+ */
+export type Address = `0x${string}`;
+
+/**
+ * Configuration for funding agents with tokens
+ * Projects implement this to define how agents receive initial balances
+ *
+ * This interface is protocol-agnostic - each project defines their own
+ * token address and funding method based on their protocol's requirements.
+ *
+ * @example
+ * // Transfer from treasury (most common)
+ * const funding: FundingConfig = {
+ *   tokenAddress: '0x...',
+ *   amountPerAgent: parseEther('10000'),
+ *   method: 'transfer',
+ *   treasuryAddress: '0x...',
+ * };
+ *
+ * @example
+ * // Mint tokens (if protocol allows)
+ * const funding: FundingConfig = {
+ *   tokenAddress: '0x...',
+ *   amountPerAgent: parseEther('10000'),
+ *   method: 'mint',
+ * };
+ *
+ * @example
+ * // Custom funding logic
+ * const funding: FundingConfig = {
+ *   amountPerAgent: parseEther('10000'),
+ *   method: 'custom',
+ *   customFunder: async (toAddress, amount, wallet) => {
+ *     // Custom implementation
+ *   },
+ * };
+ */
+export interface FundingConfig {
+  /** Token address to fund agents with (project-specific) */
+  tokenAddress?: Address;
+
+  /** Amount per agent (in token's smallest unit, e.g., wei) */
+  amountPerAgent: bigint;
+
+  /** Funding method: 'transfer' from treasury, 'mint' if allowed, or 'custom' */
+  method: 'transfer' | 'mint' | 'custom';
+
+  /** For 'transfer': address holding tokens to distribute */
+  treasuryAddress?: Address;
+
+  /**
+   * For 'custom': project provides implementation
+   * @param toAddress - Address to fund
+   * @param amount - Amount to fund
+   * @param deployerWallet - Wallet client for the deployer (for signing transactions)
+   */
+  customFunder?: (
+    toAddress: Address,
+    amount: bigint,
+    deployerWallet: unknown
+  ) => Promise<void>;
+}
+
+/**
  * A Pack provides protocol-specific bindings
  */
 export interface Pack {
@@ -96,6 +164,32 @@ export interface Pack {
 
   /** Clean up resources */
   cleanup(): Promise<void>;
+
+  /**
+   * Register an agent and optionally fund them
+   * Returns the agent's wallet address
+   *
+   * Projects implement this to:
+   * 1. Create a wallet for the agent (from HD derivation or Anvil accounts)
+   * 2. Fund the agent with native currency (ETH) if needed
+   * 3. Fund the agent with protocol tokens using fundAgent()
+   *
+   * @param agentId - Unique identifier for the agent
+   * @returns The agent's wallet address
+   */
+  registerAgent?(agentId: string): Promise<Address>;
+
+  /**
+   * Fund an agent with project-specific tokens
+   * Projects implement this based on their FundingConfig
+   *
+   * This method is protocol-agnostic - each project defines what "funding" means
+   * for their protocol (e.g., ELTA for Elata, DAI for MakerDAO, etc.)
+   *
+   * @param agentId - Unique identifier for the agent
+   * @param config - Funding configuration (token, amount, method)
+   */
+  fundAgent?(agentId: string, config: FundingConfig): Promise<void>;
 }
 
 /**
@@ -150,11 +244,13 @@ export interface MetricsConfig {
  */
 export interface Assertion {
   /** Assertion type */
-  type: 'gte' | 'lte' | 'eq' | 'gt' | 'lt';
+  type: 'gte' | 'lte' | 'eq' | 'gt' | 'lt' | 'neq';
   /** Metric name to check */
   metric: string;
   /** Expected value */
   value: number | string;
+  /** Optional custom message for the assertion */
+  message?: string;
 }
 
 /**

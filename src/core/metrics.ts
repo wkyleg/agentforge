@@ -31,6 +31,8 @@ export class MetricsCollector {
 
   /**
    * Check if metrics should be sampled this tick
+   * @param tick - The current tick number
+   * @returns True if metrics should be sampled
    */
   shouldSample(tick: number): boolean {
     return tick % this.sampleEveryTicks === 0;
@@ -38,6 +40,9 @@ export class MetricsCollector {
 
   /**
    * Collect metrics from the pack for this tick
+   * @param tick - The current tick number
+   * @param timestamp - The simulated timestamp
+   * @param pack - The pack to collect metrics from
    */
   sample(tick: number, timestamp: number, pack: Pack): void {
     if (!this.shouldSample(tick)) {
@@ -71,6 +76,9 @@ export class MetricsCollector {
 
   /**
    * Force a sample regardless of tick interval
+   * @param tick - The current tick number
+   * @param timestamp - The simulated timestamp
+   * @param pack - The pack to collect metrics from
    */
   forceSample(tick: number, timestamp: number, pack: Pack): void {
     const allMetrics = pack.getMetrics();
@@ -93,6 +101,7 @@ export class MetricsCollector {
 
   /**
    * Get all collected samples
+   * @returns Array of all metric samples
    */
   getSamples(): readonly MetricsSample[] {
     return this.samples;
@@ -100,6 +109,7 @@ export class MetricsCollector {
 
   /**
    * Get the most recent sample
+   * @returns The latest sample or undefined if no samples
    */
   getLatestSample(): MetricsSample | undefined {
     return this.samples[this.samples.length - 1];
@@ -107,6 +117,7 @@ export class MetricsCollector {
 
   /**
    * Get the final metrics (from most recent sample)
+   * @returns The metrics from the most recent sample, or empty object
    */
   getFinalMetrics(): Record<string, number | bigint | string> {
     const latest = this.getLatestSample();
@@ -115,6 +126,7 @@ export class MetricsCollector {
 
   /**
    * Convert samples to CSV format
+   * @returns CSV string with headers and all samples
    */
   toCSV(): string {
     if (this.samples.length === 0) {
@@ -153,6 +165,8 @@ export class MetricsCollector {
 
   /**
    * Get summary statistics for a metric
+   * @param metricName - The name of the metric to analyze
+   * @returns Statistics object or undefined if metric not found
    */
   getMetricStats(metricName: string): MetricStats | undefined {
     const values = this.samples
@@ -189,6 +203,8 @@ export interface MetricStats {
 
 /**
  * Create a metrics collector with default options
+ * @param options - Optional configuration for the collector
+ * @returns A new MetricsCollector instance
  */
 export function createMetricsCollector(options?: MetricsCollectorOptions): MetricsCollector {
   return new MetricsCollector(options);

@@ -1,0 +1,447 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="."><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>AgentForge API - v0.1.0</title><meta name="description" content="Documentation for AgentForge API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><div class="table-cell" id="tsd-search"><div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div><div class="field"><div id="tsd-toolbar-links"><a href="https://github.com/wkyleg/agentforge">GitHub</a><a href="https://npmjs.com/package/agentforge">npm</a></div></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">AgentForge API - v0.1.0</a></div><div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>AgentForge API - v0.1.0</h1></div><div class="tsd-panel tsd-typography"><p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="logo-light.svg">
+    <img alt="AgentForge" src="media/logo-light.svg" width="560">
+  </picture>
+</p>
+<p align="center">
+  <strong>Stress-test your protocol's economic assumptions before mainnet.</strong>
+</p>
+<p align="center">
+  <a href="https://www.npmjs.com/package/agentforge"><img src="https://img.shields.io/npm/v/agentforge?color=orange" alt="npm version"></a>
+  <a href="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml"><img src="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.7-blue" alt="TypeScript"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18%2B-green" alt="Node.js"></a>
+</p>
+<p align="center">
+  <a href="#installation">Installation</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#core-concepts">Concepts</a> •
+  <a href="#writing-scenarios">Scenarios</a> •
+  <a href="#writing-agents">Agents</a> •
+  <a href="#cli-reference">CLI</a> •
+  <a href="#examples">Examples</a>
+</p>
+<hr>
+<a id="what-is-agentforge" class="tsd-anchor"></a><h2 class="tsd-anchor-link">What is AgentForge?<a href="#what-is-agentforge" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>AgentForge is a <strong>type-safe agent-based simulation framework</strong> for Foundry/EVM protocols. Define autonomous agents, run them against your smart contracts, and validate economic invariants—all with deterministic, reproducible results.</p>
+<a id="why-agent-based-modeling" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Why Agent-Based Modeling?<a href="#why-agent-based-modeling" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Traditional testing validates individual functions. Agent-based modeling validates <strong>emergent system behavior</strong>:</p>
+<ul>
+<li>How do 1000 users interacting create MEV opportunities?</li>
+<li>Does your AMM stay solvent under extreme volatility?</li>
+<li>What happens when rational actors exploit edge cases?</li>
+</ul>
+<a id="features" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Features<a href="#features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><table>
+<tr>
+<td width="50%">
+<p><strong>Deterministic Simulation</strong></p>
+<ul>
+<li>Same seed = identical results</li>
+<li>Reproducible debugging</li>
+<li>CI regression testing</li>
+</ul>
+</td>
+<td width="50%">
+<p><strong>Type-Safe TypeScript</strong></p>
+<ul>
+<li>Full type inference</li>
+<li>Compile-time validation</li>
+<li>IntelliSense support</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td width="50%">
+<p><strong>Foundry Integration</strong></p>
+<ul>
+<li>Direct Anvil connection</li>
+<li>ABI type generation</li>
+<li>Fork mainnet state</li>
+</ul>
+</td>
+<td width="50%">
+<p><strong>Flexible Scheduling</strong></p>
+<ul>
+<li>Round-robin, random, priority</li>
+<li>Custom tick durations</li>
+<li>Parallel agent execution</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td width="50%">
+<p><strong>Rich Agent Primitives</strong></p>
+<ul>
+<li>Memory persistence</li>
+<li>Cooldown management</li>
+<li>Parameterized behavior</li>
+</ul>
+</td>
+<td width="50%">
+<p><strong>Built-in Analytics</strong></p>
+<ul>
+<li>Time-series metrics</li>
+<li>CSV/JSON export</li>
+<li>Assertion validation</li>
+</ul>
+</td>
+</tr>
+</table>
+<hr>
+<a id="architecture" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Architecture<a href="#architecture" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code class="mermaid">flowchart LR
+    subgraph Config ["Configuration"]
+        Scenario["Scenario"]
+        Pack["Pack"]
+    end
+    
+    subgraph Execution ["Simulation Engine"]
+        Engine["Engine"]
+        Scheduler["Scheduler"]
+        RNG["Seeded RNG"]
+    end
+    
+    subgraph Actors ["Agents"]
+        A1["Agent 1"]
+        A2["Agent 2"]
+        An["Agent N"]
+    end
+    
+    subgraph Output ["Results"]
+        Metrics["Metrics"]
+        Actions["Actions Log"]
+        Summary["Summary"]
+    end
+    
+    Scenario --> Engine
+    Pack --> Engine
+    Engine --> Scheduler
+    RNG --> Scheduler
+    Scheduler --> A1
+    Scheduler --> A2
+    Scheduler --> An
+    A1 --> Actions
+    A2 --> Actions
+    An --> Actions
+    Actions --> Metrics
+    Metrics --> Summary
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Key Components:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scenario</strong></td>
+<td>Defines simulation parameters: seed, duration, agents, assertions</td>
+</tr>
+<tr>
+<td><strong>Pack</strong></td>
+<td>Protocol adapter providing blockchain state and contract interactions</td>
+</tr>
+<tr>
+<td><strong>Engine</strong></td>
+<td>Orchestrates simulation lifecycle and tick execution</td>
+</tr>
+<tr>
+<td><strong>Scheduler</strong></td>
+<td>Determines agent execution order per tick</td>
+</tr>
+<tr>
+<td><strong>Agent</strong></td>
+<td>Autonomous actor that decides actions based on state</td>
+</tr>
+<tr>
+<td><strong>Metrics</strong></td>
+<td>Collects and aggregates simulation data</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<a id="installation" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code class="bash"><span class="hl-0"># Using pnpm (recommended)</span><br/><span class="hl-1">pnpm</span><span class="hl-2"> </span><span class="hl-3">add</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><br/><br/><span class="hl-0"># Using npm</span><br/><span class="hl-1">npm</span><span class="hl-2"> </span><span class="hl-3">install</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><br/><br/><span class="hl-0"># Using yarn</span><br/><span class="hl-1">yarn</span><span class="hl-2"> </span><span class="hl-3">add</span><span class="hl-2"> </span><span class="hl-3">agentforge</span>
+</code><button type="button">Copy</button></pre>
+
+<p><strong>Requirements:</strong></p>
+<ul>
+<li>Node.js 18.0.0 or higher</li>
+<li>For EVM simulations: <a href="https://book.getfoundry.sh/getting-started/installation">Foundry</a> with Anvil</li>
+</ul>
+<hr>
+<a id="quick-start" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Quick Start<a href="#quick-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><a id="1-initialize-project-structure" class="tsd-anchor"></a><h3 class="tsd-anchor-link">1. Initialize Project Structure<a href="#1-initialize-project-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-1">npx</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><span class="hl-2"> </span><span class="hl-3">init</span>
+</code><button type="button">Copy</button></pre>
+
+<p>This creates:</p>
+<pre><code><span class="hl-4">sim</span><span class="hl-2">/</span><br/><span class="hl-2">├── </span><span class="hl-4">scenarios</span><span class="hl-2">/      # </span><span class="hl-4">Your</span><span class="hl-2"> </span><span class="hl-4">simulation</span><span class="hl-2"> </span><span class="hl-4">definitions</span><br/><span class="hl-2">├── </span><span class="hl-4">agents</span><span class="hl-2">/         # </span><span class="hl-4">Custom</span><span class="hl-2"> </span><span class="hl-4">agent</span><span class="hl-2"> </span><span class="hl-4">implementations</span><br/><span class="hl-2">├── </span><span class="hl-4">packs</span><span class="hl-2">/          # </span><span class="hl-4">Protocol</span><span class="hl-2"> </span><span class="hl-4">adapters</span><br/><span class="hl-2">└── </span><span class="hl-4">results</span><span class="hl-2">/        # </span><span class="hl-4">Simulation</span><span class="hl-2"> </span><span class="hl-1">output</span><span class="hl-2"> (</span><span class="hl-4">gitignored</span><span class="hl-2">)</span>
+</code><button>Copy</button></pre>
+
+<a id="2-verify-setup" class="tsd-anchor"></a><h3 class="tsd-anchor-link">2. Verify Setup<a href="#2-verify-setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-0"># Run built-in toy scenario</span><br/><span class="hl-1">npx</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-5">--toy</span><br/><br/><span class="hl-0"># Check environment dependencies</span><br/><span class="hl-1">npx</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><span class="hl-2"> </span><span class="hl-3">doctor</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="3-run-your-first-simulation" class="tsd-anchor"></a><h3 class="tsd-anchor-link">3. Run Your First Simulation<a href="#3-run-your-first-simulation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-1">npx</span><span class="hl-2"> </span><span class="hl-3">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">sim/scenarios/my-scenario.ts</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="core-concepts" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Core Concepts<a href="#core-concepts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><a id="scenarios" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Scenarios<a href="#scenarios" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>A scenario is the entry point for any simulation. It defines:</p>
+<ul>
+<li><strong>Seed</strong> — Ensures deterministic randomness</li>
+<li><strong>Ticks</strong> — Number of simulation steps</li>
+<li><strong>Pack</strong> — Protocol adapter for blockchain interaction</li>
+<li><strong>Agents</strong> — Autonomous actors and their configurations</li>
+<li><strong>Assertions</strong> — Invariants to validate after simulation</li>
+</ul>
+<a id="packs" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Packs<a href="#packs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Packs are protocol adapters that provide:</p>
+<ul>
+<li>Initial blockchain state setup</li>
+<li>Contract deployment and interaction helpers</li>
+<li>State reading utilities for agents</li>
+<li>Custom action execution logic</li>
+</ul>
+<a id="agents" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Agents<a href="#agents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Agents are autonomous actors that:</p>
+<ul>
+<li>Receive context about current simulation state</li>
+<li>Decide what action to take (or skip)</li>
+<li>Maintain memory across ticks</li>
+<li>Use deterministic RNG for decisions</li>
+</ul>
+<a id="determinism" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Determinism<a href="#determinism" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><strong>Same seed + same scenario = identical results.</strong></p>
+<ul>
+<li>Agent execution order shuffled deterministically per tick</li>
+<li>All randomness derives from seeded RNG</li>
+<li>Enables reproducible debugging and CI regression tests</li>
+</ul>
+<hr>
+<a id="writing-scenarios" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Writing Scenarios<a href="#writing-scenarios" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code class="typescript"><span class="hl-6">import</span><span class="hl-2"> { </span><span class="hl-4">defineScenario</span><span class="hl-2"> } </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge&#39;</span><span class="hl-2">;</span><br/><span class="hl-6">import</span><span class="hl-2"> { </span><span class="hl-4">ToyPack</span><span class="hl-2">, </span><span class="hl-4">RandomTraderAgent</span><span class="hl-2">, </span><span class="hl-4">MomentumAgent</span><span class="hl-2"> } </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge/toy&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-6">export</span><span class="hl-2"> </span><span class="hl-6">default</span><span class="hl-2"> </span><span class="hl-1">defineScenario</span><span class="hl-2">({</span><br/><span class="hl-2">  </span><span class="hl-4">name:</span><span class="hl-2"> </span><span class="hl-3">&#39;market-stress&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">description:</span><span class="hl-2"> </span><span class="hl-3">&#39;Stress test market under high volatility&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">seed:</span><span class="hl-2"> </span><span class="hl-7">42</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">ticks:</span><span class="hl-2"> </span><span class="hl-7">100</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">tickSeconds:</span><span class="hl-2"> </span><span class="hl-7">3600</span><span class="hl-2">, </span><span class="hl-0">// 1 hour per tick</span><br/><br/><span class="hl-2">  </span><span class="hl-4">pack:</span><span class="hl-2"> </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-1">ToyPack</span><span class="hl-2">({</span><br/><span class="hl-2">    </span><span class="hl-4">assets:</span><span class="hl-2"> [</span><br/><span class="hl-2">      { </span><span class="hl-4">name:</span><span class="hl-2"> </span><span class="hl-3">&#39;TOKEN&#39;</span><span class="hl-2">, </span><span class="hl-4">initialPrice:</span><span class="hl-2"> </span><span class="hl-7">100</span><span class="hl-2">, </span><span class="hl-4">volatility:</span><span class="hl-2"> </span><span class="hl-7">0.05</span><span class="hl-2"> },</span><br/><span class="hl-2">    ],</span><br/><span class="hl-2">    </span><span class="hl-4">initialCash:</span><span class="hl-2"> </span><span class="hl-7">10000</span><span class="hl-2">,</span><br/><span class="hl-2">  }),</span><br/><br/><span class="hl-2">  </span><span class="hl-4">agents:</span><span class="hl-2"> [</span><br/><span class="hl-2">    { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-4">RandomTraderAgent</span><span class="hl-2">, </span><span class="hl-4">count:</span><span class="hl-2"> </span><span class="hl-7">10</span><span class="hl-2"> },</span><br/><span class="hl-2">    { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-4">MomentumAgent</span><span class="hl-2">, </span><span class="hl-4">count:</span><span class="hl-2"> </span><span class="hl-7">5</span><span class="hl-2">, </span><span class="hl-4">params:</span><span class="hl-2"> { </span><span class="hl-4">threshold:</span><span class="hl-2"> </span><span class="hl-7">0.02</span><span class="hl-2"> } },</span><br/><span class="hl-2">  ],</span><br/><br/><span class="hl-2">  </span><span class="hl-0">// Optional: Validate simulation outcomes</span><br/><span class="hl-2">  </span><span class="hl-4">assertions:</span><span class="hl-2"> [</span><br/><span class="hl-2">    { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-3">&#39;gt&#39;</span><span class="hl-2">, </span><span class="hl-4">metric:</span><span class="hl-2"> </span><span class="hl-3">&#39;totalVolume&#39;</span><span class="hl-2">, </span><span class="hl-4">value:</span><span class="hl-2"> </span><span class="hl-7">0</span><span class="hl-2"> },</span><br/><span class="hl-2">    { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-3">&#39;gte&#39;</span><span class="hl-2">, </span><span class="hl-4">metric:</span><span class="hl-2"> </span><span class="hl-3">&#39;successRate&#39;</span><span class="hl-2">, </span><span class="hl-4">value:</span><span class="hl-2"> </span><span class="hl-7">0.9</span><span class="hl-2"> },</span><br/><span class="hl-2">  ],</span><br/><span class="hl-2">});</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="scenario-options" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Scenario Options<a href="#scenario-options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Unique scenario identifier</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code></td>
+<td>Human-readable description</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td><code>number</code></td>
+<td>Random seed for determinism</td>
+</tr>
+<tr>
+<td><code>ticks</code></td>
+<td><code>number</code></td>
+<td>Number of simulation steps</td>
+</tr>
+<tr>
+<td><code>tickSeconds</code></td>
+<td><code>number</code></td>
+<td>Simulated time per tick</td>
+</tr>
+<tr>
+<td><code>pack</code></td>
+<td><code>Pack</code></td>
+<td>Protocol adapter instance</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td><code>AgentConfig[]</code></td>
+<td>Agent types and counts</td>
+</tr>
+<tr>
+<td><code>assertions</code></td>
+<td><code>Assertion[]</code></td>
+<td>Post-simulation validations</td>
+</tr>
+<tr>
+<td><code>scheduler</code></td>
+<td><code>SchedulerType</code></td>
+<td>Execution order strategy</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<a id="writing-agents" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Writing Agents<a href="#writing-agents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Extend <code>BaseAgent</code> and implement the <code>step()</code> method:</p>
+<pre><code class="typescript"><span class="hl-6">import</span><span class="hl-2"> { </span><span class="hl-4">BaseAgent</span><span class="hl-2">, </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">Action</span><span class="hl-2">, </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">TickContext</span><span class="hl-2"> } </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge&#39;</span><span class="hl-2">;</span><br/><br/><span class="hl-6">export</span><span class="hl-2"> </span><span class="hl-5">class</span><span class="hl-2"> </span><span class="hl-8">MyAgent</span><span class="hl-2"> </span><span class="hl-5">extends</span><span class="hl-2"> </span><span class="hl-8">BaseAgent</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-5">async</span><span class="hl-2"> </span><span class="hl-1">step</span><span class="hl-2">(</span><span class="hl-4">ctx</span><span class="hl-2">: </span><span class="hl-8">TickContext</span><span class="hl-2">): </span><span class="hl-8">Promise</span><span class="hl-2">&lt;</span><span class="hl-8">Action</span><span class="hl-2"> | </span><span class="hl-8">null</span><span class="hl-2">&gt; {</span><br/><span class="hl-2">    </span><span class="hl-0">// Access deterministic RNG</span><br/><span class="hl-2">    </span><span class="hl-6">if</span><span class="hl-2"> (</span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">chance</span><span class="hl-2">(</span><span class="hl-7">0.3</span><span class="hl-2">)) {</span><br/><span class="hl-2">      </span><span class="hl-6">return</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-4">id:</span><span class="hl-2"> </span><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">generateActionId</span><span class="hl-2">(</span><span class="hl-3">&#39;buy&#39;</span><span class="hl-2">, </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">tick</span><span class="hl-2">),</span><br/><span class="hl-2">        </span><span class="hl-4">name:</span><span class="hl-2"> </span><span class="hl-3">&#39;buy&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        </span><span class="hl-4">params:</span><span class="hl-2"> { </span><br/><span class="hl-2">          </span><span class="hl-4">amount:</span><span class="hl-2"> </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">nextU32</span><span class="hl-2">() % </span><span class="hl-7">100</span><span class="hl-2">,</span><br/><span class="hl-2">          </span><span class="hl-4">asset:</span><span class="hl-2"> </span><span class="hl-3">&#39;TOKEN&#39;</span><span class="hl-2">,</span><br/><span class="hl-2">        },</span><br/><span class="hl-2">      };</span><br/><span class="hl-2">    }</span><br/><span class="hl-2">    </span><span class="hl-6">return</span><span class="hl-2"> </span><span class="hl-5">null</span><span class="hl-2">; </span><span class="hl-0">// Skip this tick</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="agent-capabilities" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Agent Capabilities<a href="#agent-capabilities" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><a id="memory" class="tsd-anchor"></a><h4 class="tsd-anchor-link">Memory<a href="#memory" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Persist state across ticks:</p>
+<pre><code class="typescript"><span class="hl-0">// Store a value</span><br/><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">remember</span><span class="hl-2">(</span><span class="hl-3">&#39;lastPrice&#39;</span><span class="hl-2">, </span><span class="hl-4">currentPrice</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Retrieve a value</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">lastPrice</span><span class="hl-2"> = </span><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">recall</span><span class="hl-2">&lt;</span><span class="hl-8">number</span><span class="hl-2">&gt;(</span><span class="hl-3">&#39;lastPrice&#39;</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Clear a value</span><br/><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">forget</span><span class="hl-2">(</span><span class="hl-3">&#39;lastPrice&#39;</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="cooldowns" class="tsd-anchor"></a><h4 class="tsd-anchor-link">Cooldowns<a href="#cooldowns" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Rate-limit actions:</p>
+<pre><code class="typescript"><span class="hl-0">// Set cooldown for 5 ticks</span><br/><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">setCooldown</span><span class="hl-2">(</span><span class="hl-3">&#39;trade&#39;</span><span class="hl-2">, </span><span class="hl-7">5</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Check if still on cooldown</span><br/><span class="hl-6">if</span><span class="hl-2"> (</span><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">isOnCooldown</span><span class="hl-2">(</span><span class="hl-3">&#39;trade&#39;</span><span class="hl-2">)) {</span><br/><span class="hl-2">  </span><span class="hl-6">return</span><span class="hl-2"> </span><span class="hl-5">null</span><span class="hl-2">;</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="parameters" class="tsd-anchor"></a><h4 class="tsd-anchor-link">Parameters<a href="#parameters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Access scenario-defined configuration:</p>
+<pre><code class="typescript"><span class="hl-0">// In scenario: { type: MyAgent, params: { aggression: 0.8 } }</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">aggression</span><span class="hl-2"> = </span><span class="hl-5">this</span><span class="hl-2">.</span><span class="hl-1">getParam</span><span class="hl-2">&lt;</span><span class="hl-8">number</span><span class="hl-2">&gt;(</span><span class="hl-3">&#39;aggression&#39;</span><span class="hl-2">, </span><span class="hl-7">0.5</span><span class="hl-2">); </span><span class="hl-0">// default 0.5</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="deterministic-rng" class="tsd-anchor"></a><h4 class="tsd-anchor-link">Deterministic RNG<a href="#deterministic-rng" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Always use context RNG for reproducibility:</p>
+<pre><code class="typescript"><span class="hl-0">// Random boolean with probability</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">shouldAct</span><span class="hl-2"> = </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">chance</span><span class="hl-2">(</span><span class="hl-7">0.5</span><span class="hl-2">);</span><br/><br/><span class="hl-0">// Random integer</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">amount</span><span class="hl-2"> = </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">nextU32</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Random float [0, 1)</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">factor</span><span class="hl-2"> = </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">nextFloat</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// Random from range</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-9">index</span><span class="hl-2"> = </span><span class="hl-4">ctx</span><span class="hl-2">.</span><span class="hl-4">rng</span><span class="hl-2">.</span><span class="hl-1">range</span><span class="hl-2">(</span><span class="hl-7">0</span><span class="hl-2">, </span><span class="hl-4">items</span><span class="hl-2">.</span><span class="hl-4">length</span><span class="hl-2">);</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="cli-reference" class="tsd-anchor"></a><h2 class="tsd-anchor-link">CLI Reference<a href="#cli-reference" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><a id="commands" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Commands<a href="#commands" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agentforge init [path]</code></td>
+<td>Initialize simulation folder structure</td>
+</tr>
+<tr>
+<td><code>agentforge run &lt;scenario&gt;</code></td>
+<td>Execute a scenario file</td>
+</tr>
+<tr>
+<td><code>agentforge run --toy</code></td>
+<td>Run built-in toy scenario</td>
+</tr>
+<tr>
+<td><code>agentforge doctor</code></td>
+<td>Check environment dependencies</td>
+</tr>
+<tr>
+<td><code>agentforge types</code></td>
+<td>Generate TypeScript types from Foundry artifacts</td>
+</tr>
+</tbody>
+</table>
+<a id="run-options" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Run Options<a href="#run-options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-1">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">scenario.ts</span><span class="hl-2"> [options]</span>
+</code><button type="button">Copy</button></pre>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--seed &lt;n&gt;</code></td>
+<td>Override random seed</td>
+</tr>
+<tr>
+<td><code>--ticks &lt;n&gt;</code></td>
+<td>Override tick count</td>
+</tr>
+<tr>
+<td><code>--out &lt;dir&gt;</code></td>
+<td>Output directory (default: <code>sim/results</code>)</td>
+</tr>
+<tr>
+<td><code>--ci</code></td>
+<td>CI mode: no colors, stable paths</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>Enable verbose logging</td>
+</tr>
+<tr>
+<td><code>--quiet</code></td>
+<td>Suppress non-error output</td>
+</tr>
+</tbody>
+</table>
+<a id="examples" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Examples<a href="#examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-0"># Run with custom seed</span><br/><span class="hl-1">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">sim/scenarios/stress.ts</span><span class="hl-2"> </span><span class="hl-5">--seed</span><span class="hl-2"> </span><span class="hl-7">12345</span><br/><br/><span class="hl-0"># Run for more ticks</span><br/><span class="hl-1">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">sim/scenarios/stress.ts</span><span class="hl-2"> </span><span class="hl-5">--ticks</span><span class="hl-2"> </span><span class="hl-7">1000</span><br/><br/><span class="hl-0"># CI-friendly output</span><br/><span class="hl-1">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">sim/scenarios/stress.ts</span><span class="hl-2"> </span><span class="hl-5">--ci</span><span class="hl-2"> </span><span class="hl-5">--out</span><span class="hl-2"> </span><span class="hl-3">./artifacts</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="output" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Output<a href="#output" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Each simulation run produces artifacts:</p>
+<pre><code><span class="hl-4">results</span><span class="hl-2">/&lt;</span><span class="hl-4">timestamp</span><span class="hl-2">&gt;-&lt;</span><span class="hl-8">scenario</span><span class="hl-2">&gt;/</span><br/><span class="hl-2">├── </span><span class="hl-4">summary</span><span class="hl-2">.</span><span class="hl-4">json</span><span class="hl-2">          # </span><span class="hl-4">Metadata</span><span class="hl-2">, </span><span class="hl-4">final</span><span class="hl-2"> </span><span class="hl-4">metrics</span><span class="hl-2">, </span><span class="hl-4">assertion</span><span class="hl-2"> </span><span class="hl-4">results</span><br/><span class="hl-2">├── </span><span class="hl-4">metrics</span><span class="hl-2">.</span><span class="hl-4">csv</span><span class="hl-2">           # </span><span class="hl-4">Time</span><span class="hl-2">-</span><span class="hl-4">series</span><span class="hl-2"> </span><span class="hl-4">data</span><span class="hl-2"> </span><span class="hl-4">for</span><span class="hl-2"> </span><span class="hl-4">analysis</span><br/><span class="hl-2">├── </span><span class="hl-4">actions</span><span class="hl-2">.</span><span class="hl-4">ndjson</span><span class="hl-2">        # </span><span class="hl-4">Every</span><span class="hl-2"> </span><span class="hl-1">action</span><span class="hl-2"> (</span><span class="hl-4">newline</span><span class="hl-2">-</span><span class="hl-4">delimited</span><span class="hl-2"> </span><span class="hl-9">JSON</span><span class="hl-2">)</span><br/><span class="hl-2">├── </span><span class="hl-4">config_resolved</span><span class="hl-2">.</span><span class="hl-4">json</span><span class="hl-2">  # </span><span class="hl-4">Final</span><span class="hl-2"> </span><span class="hl-4">resolved</span><span class="hl-2"> </span><span class="hl-4">configuration</span><br/><span class="hl-2">└── </span><span class="hl-4">run</span><span class="hl-2">.</span><span class="hl-4">log</span><span class="hl-2">               # </span><span class="hl-4">Structured</span><span class="hl-2"> </span><span class="hl-4">execution</span><span class="hl-2"> </span><span class="hl-4">logs</span>
+</code><button>Copy</button></pre>
+
+<a id="summary-json" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Summary JSON<a href="#summary-json" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="json"><span class="hl-2">{</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;scenario&quot;</span><span class="hl-2">: </span><span class="hl-3">&quot;market-stress&quot;</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;seed&quot;</span><span class="hl-2">: </span><span class="hl-7">42</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;ticks&quot;</span><span class="hl-2">: </span><span class="hl-7">100</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;duration_ms&quot;</span><span class="hl-2">: </span><span class="hl-7">1234</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;metrics&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">    </span><span class="hl-10">&quot;totalVolume&quot;</span><span class="hl-2">: </span><span class="hl-7">15234.56</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-10">&quot;successRate&quot;</span><span class="hl-2">: </span><span class="hl-7">0.95</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  </span><span class="hl-10">&quot;assertions&quot;</span><span class="hl-2">: {</span><br/><span class="hl-2">    </span><span class="hl-10">&quot;passed&quot;</span><span class="hl-2">: </span><span class="hl-7">2</span><span class="hl-2">,</span><br/><span class="hl-2">    </span><span class="hl-10">&quot;failed&quot;</span><span class="hl-2">: </span><span class="hl-7">0</span><br/><span class="hl-2">  }</span><br/><span class="hl-2">}</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="metrics-csv" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Metrics CSV<a href="#metrics-csv" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="csv">tick,timestamp,totalVolume,avgPrice,activeAgents
+1,1706400000,100.5,100.2,15
+2,1706403600,205.3,101.1,15
+...
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="examples-1" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Examples<a href="#examples-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>See the <a href="examples/">examples/</a> directory:</p>
+<table>
+<thead>
+<tr>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>basic-simulation/</code></td>
+<td>Minimal setup with built-in agents</td>
+</tr>
+<tr>
+<td><code>custom-agent/</code></td>
+<td>Memory, cooldowns, and custom behavior</td>
+</tr>
+<tr>
+<td><code>assertions/</code></td>
+<td>Validation and failure handling</td>
+</tr>
+<tr>
+<td><code>metrics-tracking/</code></td>
+<td>CSV analysis and statistics</td>
+</tr>
+</tbody>
+</table>
+<p>Run any example:</p>
+<pre><code class="bash"><span class="hl-1">agentforge</span><span class="hl-2"> </span><span class="hl-3">run</span><span class="hl-2"> </span><span class="hl-3">examples/basic-simulation/scenario.ts</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="testing-integration" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Testing Integration<a href="#testing-integration" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>AgentForge works great in CI pipelines:</p>
+<pre><code class="yaml"><span class="hl-0"># .github/workflows/simulation.yml</span><br/><span class="hl-2">- </span><span class="hl-11">name</span><span class="hl-2">: </span><span class="hl-12">Run simulations</span><br/><span class="hl-2">  </span><span class="hl-11">run</span><span class="hl-2">: </span><span class="hl-6">|</span><br/><span class="hl-12">    npx agentforge run sim/scenarios/regression.ts --ci</span><br/><span class="hl-12">    npx agentforge run sim/scenarios/stress.ts --ci --seed 42</span>
+</code><button type="button">Copy</button></pre>
+
+<p>Use assertions to fail CI on invariant violations:</p>
+<pre><code class="typescript"><span class="hl-13">assertions</span><span class="hl-2">: [</span><br/><span class="hl-2">  { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-3">&#39;gte&#39;</span><span class="hl-2">, </span><span class="hl-4">metric:</span><span class="hl-2"> </span><span class="hl-3">&#39;successRate&#39;</span><span class="hl-2">, </span><span class="hl-4">value:</span><span class="hl-2"> </span><span class="hl-7">0.95</span><span class="hl-2"> },</span><br/><span class="hl-2">  { </span><span class="hl-4">type:</span><span class="hl-2"> </span><span class="hl-3">&#39;lte&#39;</span><span class="hl-2">, </span><span class="hl-4">metric:</span><span class="hl-2"> </span><span class="hl-3">&#39;maxSlippage&#39;</span><span class="hl-2">, </span><span class="hl-4">value:</span><span class="hl-2"> </span><span class="hl-7">0.05</span><span class="hl-2"> },</span><br/><span class="hl-2">]</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="api-reference" class="tsd-anchor"></a><h2 class="tsd-anchor-link">API Reference<a href="#api-reference" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><a id="core-exports" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Core Exports<a href="#core-exports" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="typescript"><span class="hl-6">import</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-0">// Scenario definition</span><br/><span class="hl-2">  </span><span class="hl-4">defineScenario</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-0">// Agent base class</span><br/><span class="hl-2">  </span><span class="hl-4">BaseAgent</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-0">// Types</span><br/><span class="hl-2">  </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">Scenario</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">Action</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">TickContext</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-6">type</span><span class="hl-2"> </span><span class="hl-4">Pack</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-0">// Engine (advanced)</span><br/><span class="hl-2">  </span><span class="hl-4">SimulationEngine</span><span class="hl-2">,</span><br/><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge&#39;</span><span class="hl-2">;</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="adapters-1" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Adapters<a href="#adapters-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="typescript"><span class="hl-6">import</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-0">// Anvil integration</span><br/><span class="hl-2">  </span><span class="hl-4">AnvilAdapter</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><br/><span class="hl-2">  </span><span class="hl-0">// Viem utilities</span><br/><span class="hl-2">  </span><span class="hl-4">createViemClient</span><span class="hl-2">,</span><br/><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge/adapters&#39;</span><span class="hl-2">;</span>
+</code><button type="button">Copy</button></pre>
+
+<a id="toy-simulation-developmenttesting" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Toy Simulation (Development/Testing)<a href="#toy-simulation-developmenttesting" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="typescript"><span class="hl-6">import</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-4">ToyPack</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">RandomTraderAgent</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">MomentumAgent</span><span class="hl-2">,</span><br/><span class="hl-2">  </span><span class="hl-4">MarketMakerAgent</span><span class="hl-2">,</span><br/><span class="hl-2">} </span><span class="hl-6">from</span><span class="hl-2"> </span><span class="hl-3">&#39;agentforge/toy&#39;</span><span class="hl-2">;</span>
+</code><button type="button">Copy</button></pre>
+
+<hr>
+<a id="contributing" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Contributing<a href="#contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>We welcome contributions! See <a href="media/CONTRIBUTING.md">CONTRIBUTING.md</a> for:</p>
+<ul>
+<li>Development setup</li>
+<li>Code style guidelines</li>
+<li>Testing requirements</li>
+<li>Pull request process</li>
+</ul>
+<hr>
+<a id="license" class="tsd-anchor"></a><h2 class="tsd-anchor-link">License<a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>MIT — see <a href="media/LICENSE">LICENSE</a>.</p>
+<hr>
+<p align="center">
+  <sub>Built by <a href="https://github.com/wkyleg">wkyleg.eth</a> • Star this repo if you find it useful!</sub>
+</p></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#what-is-agentforge"><span>What is <wbr/>Agent<wbr/>Forge?</span></a><ul><li><a href="#why-agent-based-modeling"><span>Why <wbr/>Agent-<wbr/>Based <wbr/>Modeling?</span></a></li><li><a href="#features"><span>Features</span></a></li></ul><a href="#architecture"><span>Architecture</span></a><a href="#installation"><span>Installation</span></a><a href="#quick-start"><span>Quick <wbr/>Start</span></a><ul><li><a href="#1-initialize-project-structure"><span>1. <wbr/>Initialize <wbr/>Project <wbr/>Structure</span></a></li><li><a href="#2-verify-setup"><span>2. <wbr/>Verify <wbr/>Setup</span></a></li><li><a href="#3-run-your-first-simulation"><span>3. <wbr/>Run <wbr/>Your <wbr/>First <wbr/>Simulation</span></a></li></ul><a href="#core-concepts"><span>Core <wbr/>Concepts</span></a><ul><li><a href="#scenarios"><span>Scenarios</span></a></li><li><a href="#packs"><span>Packs</span></a></li><li><a href="#agents"><span>Agents</span></a></li><li><a href="#determinism"><span>Determinism</span></a></li></ul><a href="#writing-scenarios"><span>Writing <wbr/>Scenarios</span></a><ul><li><a href="#scenario-options"><span>Scenario <wbr/>Options</span></a></li></ul><a href="#writing-agents"><span>Writing <wbr/>Agents</span></a><ul><li><a href="#agent-capabilities"><span>Agent <wbr/>Capabilities</span></a></li><li><ul><li><a href="#memory"><span>Memory</span></a></li><li><a href="#cooldowns"><span>Cooldowns</span></a></li><li><a href="#parameters"><span>Parameters</span></a></li><li><a href="#deterministic-rng"><span>Deterministic RNG</span></a></li></ul></li></ul><a href="#cli-reference"><span>CLI <wbr/>Reference</span></a><ul><li><a href="#commands"><span>Commands</span></a></li><li><a href="#run-options"><span>Run <wbr/>Options</span></a></li><li><a href="#examples"><span>Examples</span></a></li></ul><a href="#output"><span>Output</span></a><ul><li><a href="#summary-json"><span>Summary JSON</span></a></li><li><a href="#metrics-csv"><span>Metrics CSV</span></a></li></ul><a href="#examples-1"><span>Examples</span></a><a href="#testing-integration"><span>Testing <wbr/>Integration</span></a><a href="#api-reference"><span>API <wbr/>Reference</span></a><ul><li><a href="#core-exports"><span>Core <wbr/>Exports</span></a></li><li><a href="#adapters-1"><span>Adapters</span></a></li><li><a href="#toy-simulation-developmenttesting"><span>Toy <wbr/>Simulation (<wbr/>Development/<wbr/>Testing)</span></a></li></ul><a href="#contributing"><span>Contributing</span></a><a href="#license"><span>License</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/wkyleg/agentforge" class="tsd-nav-link">GitHub</a><a href="https://npmjs.com/package/agentforge" class="tsd-nav-link">npm</a></nav><nav class="tsd-navigation"><a href="modules.html">AgentForge API - v0.1.0</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

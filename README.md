@@ -1,18 +1,161 @@
-# AgentForge
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="logo-light.svg">
+    <img alt="AgentForge" src="logo-light.svg" width="560">
+  </picture>
+</p>
 
-Type-safe agent-based simulation framework for Foundry/EVM protocols.
+<p align="center">
+  <strong>Stress-test your protocol's economic assumptions before mainnet.</strong>
+</p>
 
-AgentForge enables you to stress-test your Solidity protocol's economic assumptions by simulating multiple agents interacting with your contracts over time. Think of it as "unit tests for tokenomics."
+<p align="center">
+  <a href="https://www.npmjs.com/package/agentforge"><img src="https://img.shields.io/npm/v/agentforge?color=orange" alt="npm version"></a>
+  <a href="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml"><img src="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.7-blue" alt="TypeScript"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18%2B-green" alt="Node.js"></a>
+</p>
 
-## Features
+<p align="center">
+  <a href="#installation">Installation</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#core-concepts">Concepts</a> •
+  <a href="#writing-scenarios">Scenarios</a> •
+  <a href="#writing-agents">Agents</a> •
+  <a href="#cli-reference">CLI</a> •
+  <a href="#examples">Examples</a>
+</p>
 
-- **Type-safe TypeScript + Viem** - Full type safety for contract interactions
-- **Deterministic simulations** - Same seed produces identical results
-- **CLI tool (`forge-sim`)** - Easy integration with any Foundry project
-- **Pluggable packs** - Protocol-specific bindings for your contracts
-- **Multiple agent types** - Random traders, momentum followers, custom behaviors
-- **Rich artifacts** - JSON summaries, CSV metrics, action logs
-- **CI-ready** - Designed for automated testing pipelines
+---
+
+## What is AgentForge?
+
+AgentForge is a **type-safe agent-based simulation framework** for Foundry/EVM protocols. Define autonomous agents, run them against your smart contracts, and validate economic invariants—all with deterministic, reproducible results.
+
+### Why Agent-Based Modeling?
+
+Traditional testing validates individual functions. Agent-based modeling validates **emergent system behavior**:
+
+- How do 1000 users interacting create MEV opportunities?
+- Does your AMM stay solvent under extreme volatility?
+- What happens when rational actors exploit edge cases?
+
+### Features
+
+<table>
+<tr>
+<td width="50%">
+
+**Deterministic Simulation**
+- Same seed = identical results
+- Reproducible debugging
+- CI regression testing
+
+</td>
+<td width="50%">
+
+**Type-Safe TypeScript**
+- Full type inference
+- Compile-time validation
+- IntelliSense support
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Foundry Integration**
+- Direct Anvil connection
+- ABI type generation
+- Fork mainnet state
+
+</td>
+<td width="50%">
+
+**Flexible Scheduling**
+- Round-robin, random, priority
+- Custom tick durations
+- Parallel agent execution
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Rich Agent Primitives**
+- Memory persistence
+- Cooldown management
+- Parameterized behavior
+
+</td>
+<td width="50%">
+
+**Built-in Analytics**
+- Time-series metrics
+- CSV/JSON export
+- Assertion validation
+
+</td>
+</tr>
+</table>
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Config ["Configuration"]
+        Scenario["Scenario"]
+        Pack["Pack"]
+    end
+    
+    subgraph Execution ["Simulation Engine"]
+        Engine["Engine"]
+        Scheduler["Scheduler"]
+        RNG["Seeded RNG"]
+    end
+    
+    subgraph Actors ["Agents"]
+        A1["Agent 1"]
+        A2["Agent 2"]
+        An["Agent N"]
+    end
+    
+    subgraph Output ["Results"]
+        Metrics["Metrics"]
+        Actions["Actions Log"]
+        Summary["Summary"]
+    end
+    
+    Scenario --> Engine
+    Pack --> Engine
+    Engine --> Scheduler
+    RNG --> Scheduler
+    Scheduler --> A1
+    Scheduler --> A2
+    Scheduler --> An
+    A1 --> Actions
+    A2 --> Actions
+    An --> Actions
+    Actions --> Metrics
+    Metrics --> Summary
+```
+
+**Key Components:**
+
+| Component | Description |
+|-----------|-------------|
+| **Scenario** | Defines simulation parameters: seed, duration, agents, assertions |
+| **Pack** | Protocol adapter providing blockchain state and contract interactions |
+| **Engine** | Orchestrates simulation lifecycle and tick execution |
+| **Scheduler** | Determines agent execution order per tick |
+| **Agent** | Autonomous actor that decides actions based on state |
+| **Metrics** | Collects and aggregates simulation data |
+
+---
 
 ## Installation
 
@@ -27,48 +170,99 @@ npm install agentforge
 yarn add agentforge
 ```
 
+**Requirements:**
+- Node.js 18.0.0 or higher
+- For EVM simulations: [Foundry](https://book.getfoundry.sh/getting-started/installation) with Anvil
+
+---
+
 ## Quick Start
 
-### 1. Initialize your project
+### 1. Initialize Project Structure
 
 ```bash
-npx forge-sim init
+npx agentforge init
 ```
 
-This creates a `sim/` directory with:
-- `scenarios/` - Simulation scenario files
-- `agents/` - Custom agent implementations
-- `packs/` - Protocol-specific packs
-- `results/` - Output artifacts (gitignored)
+This creates:
+```
+sim/
+├── scenarios/      # Your simulation definitions
+├── agents/         # Custom agent implementations
+├── packs/          # Protocol adapters
+└── results/        # Simulation output (gitignored)
+```
 
-### 2. Run the toy scenario
+### 2. Verify Setup
 
 ```bash
-npx forge-sim run --toy
+# Run built-in toy scenario
+npx agentforge run --toy
+
+# Check environment dependencies
+npx agentforge doctor
 ```
 
-This runs a built-in market simulation to verify everything works.
-
-### 3. Check your environment
+### 3. Run Your First Simulation
 
 ```bash
-npx forge-sim doctor
+npx agentforge run sim/scenarios/my-scenario.ts
 ```
+
+---
+
+## Core Concepts
+
+### Scenarios
+
+A scenario is the entry point for any simulation. It defines:
+
+- **Seed** — Ensures deterministic randomness
+- **Ticks** — Number of simulation steps
+- **Pack** — Protocol adapter for blockchain interaction
+- **Agents** — Autonomous actors and their configurations
+- **Assertions** — Invariants to validate after simulation
+
+### Packs
+
+Packs are protocol adapters that provide:
+
+- Initial blockchain state setup
+- Contract deployment and interaction helpers
+- State reading utilities for agents
+- Custom action execution logic
+
+### Agents
+
+Agents are autonomous actors that:
+
+- Receive context about current simulation state
+- Decide what action to take (or skip)
+- Maintain memory across ticks
+- Use deterministic RNG for decisions
+
+### Determinism
+
+**Same seed + same scenario = identical results.**
+
+- Agent execution order shuffled deterministically per tick
+- All randomness derives from seeded RNG
+- Enables reproducible debugging and CI regression tests
+
+---
 
 ## Writing Scenarios
 
-Scenarios define the simulation parameters, agents, and assertions.
-
 ```typescript
-// sim/scenarios/my-scenario.ts
 import { defineScenario } from 'agentforge';
 import { ToyPack, RandomTraderAgent, MomentumAgent } from 'agentforge/toy';
 
 export default defineScenario({
-  name: 'my-scenario',
-  seed: 42,              // Deterministic seed
-  ticks: 100,            // Number of simulation steps
-  tickSeconds: 3600,     // Simulated time per tick (1 hour)
+  name: 'market-stress',
+  description: 'Stress test market under high volatility',
+  seed: 42,
+  ticks: 100,
+  tickSeconds: 3600, // 1 hour per tick
 
   pack: new ToyPack({
     assets: [
@@ -79,152 +273,246 @@ export default defineScenario({
 
   agents: [
     { type: RandomTraderAgent, count: 10 },
-    { type: MomentumAgent, count: 5 },
+    { type: MomentumAgent, count: 5, params: { threshold: 0.02 } },
   ],
 
-  metrics: {
-    sampleEveryTicks: 1,
-  },
-
+  // Optional: Validate simulation outcomes
   assertions: [
     { type: 'gt', metric: 'totalVolume', value: 0 },
+    { type: 'gte', metric: 'successRate', value: 0.9 },
   ],
 });
 ```
 
-Run it:
+### Scenario Options
 
-```bash
-npx forge-sim run sim/scenarios/my-scenario.ts
-```
+| Option | Type | Description |
+|--------|------|-------------|
+| `name` | `string` | Unique scenario identifier |
+| `description` | `string` | Human-readable description |
+| `seed` | `number` | Random seed for determinism |
+| `ticks` | `number` | Number of simulation steps |
+| `tickSeconds` | `number` | Simulated time per tick |
+| `pack` | `Pack` | Protocol adapter instance |
+| `agents` | `AgentConfig[]` | Agent types and counts |
+| `assertions` | `Assertion[]` | Post-simulation validations |
+| `scheduler` | `SchedulerType` | Execution order strategy |
 
-## Writing Custom Agents
+---
 
-Agents are TypeScript classes that decide what action to take each tick.
+## Writing Agents
+
+Extend `BaseAgent` and implement the `step()` method:
 
 ```typescript
 import { BaseAgent, type Action, type TickContext } from 'agentforge';
 
 export class MyAgent extends BaseAgent {
   async step(ctx: TickContext): Promise<Action | null> {
-    // Access world state
-    const world = ctx.world;
-    
-    // Use deterministic RNG
+    // Access deterministic RNG
     if (ctx.rng.chance(0.3)) {
       return {
         id: this.generateActionId('buy', ctx.tick),
         name: 'buy',
-        params: { amount: 100 },
+        params: { 
+          amount: ctx.rng.nextU32() % 100,
+          asset: 'TOKEN',
+        },
       };
     }
-    
     return null; // Skip this tick
   }
 }
 ```
 
-## CLI Reference
+### Agent Capabilities
 
-### `forge-sim doctor`
+#### Memory
 
-Check your environment for required dependencies.
+Persist state across ticks:
 
-```bash
-forge-sim doctor [--json]
+```typescript
+// Store a value
+this.remember('lastPrice', currentPrice);
+
+// Retrieve a value
+const lastPrice = this.recall<number>('lastPrice');
+
+// Clear a value
+this.forget('lastPrice');
 ```
 
-Options:
-- `--json` - Output results as JSON (for programmatic use)
+#### Cooldowns
 
-### `forge-sim init`
+Rate-limit actions:
 
-Initialize simulation folder structure.
+```typescript
+// Set cooldown for 5 ticks
+this.setCooldown('trade', 5);
 
-```bash
-forge-sim init [path] [--force]
-```
-
-Options:
-- `path` - Target directory (default: current directory)
-- `--force` - Overwrite existing files
-
-### `forge-sim run`
-
-Execute a simulation scenario.
-
-```bash
-forge-sim run [scenario] [options]
-```
-
-Options:
-- `--toy` - Run built-in toy scenario
-- `-s, --seed <n>` - Random seed (overrides scenario)
-- `-t, --ticks <n>` - Number of ticks (overrides scenario)
-- `--tick-seconds <n>` - Seconds per tick (overrides scenario)
-- `-o, --out <path>` - Output directory (default: sim/results)
-- `--ci` - CI mode (no colors, stable output paths)
-- `-v, --verbose` - Verbose logging
-- `--fork-url <url>` - Fork from a network URL (for EVM simulations)
-- `--snapshot-every <n>` - Create snapshots every N ticks
-- `--watch` - Re-run simulation when scenario file changes
-- `--json` - Output results as JSON
-
-### `forge-sim types`
-
-Extract ABIs from Foundry artifacts and generate TypeScript types.
-
-```bash
-forge-sim types [options]
-```
-
-Options:
-- `-d, --dir <path>` - Target directory with Foundry project (default: .)
-- `-o, --out <path>` - Output directory for generated types (default: sim/generated/abi)
-- `--no-index` - Do not generate index.ts file
-- `-f, --filter <pattern>` - Filter contracts by name pattern
-- `--json` - Output result as JSON
-
-## Output Artifacts
-
-Each simulation run produces:
-
-```
-sim/results/<run-id>/
-├── summary.json         # Run metadata, final KPIs, agent stats
-├── metrics.csv          # Time-series data
-├── actions.ndjson       # All agent actions (newline-delimited JSON)
-├── config_resolved.json # Resolved configuration
-└── run.log              # Structured log output
-```
-
-### summary.json
-
-```json
-{
-  "runId": "my-scenario-2026-01-27T...",
-  "scenarioName": "my-scenario",
-  "seed": 42,
-  "ticks": 100,
-  "durationMs": 1234,
-  "success": true,
-  "finalMetrics": {
-    "totalVolume": 15000,
-    "price_TOKEN": 105.23
-  },
-  "agentStats": [
-    {
-      "id": "RandomTraderAgent-0",
-      "type": "RandomTraderAgent",
-      "actionsAttempted": 45,
-      "actionsSucceeded": 42,
-      "actionsFailed": 3
-    }
-  ]
+// Check if still on cooldown
+if (this.isOnCooldown('trade')) {
+  return null;
 }
 ```
 
-## Library API
+#### Parameters
+
+Access scenario-defined configuration:
+
+```typescript
+// In scenario: { type: MyAgent, params: { aggression: 0.8 } }
+const aggression = this.getParam<number>('aggression', 0.5); // default 0.5
+```
+
+#### Deterministic RNG
+
+Always use context RNG for reproducibility:
+
+```typescript
+// Random boolean with probability
+const shouldAct = ctx.rng.chance(0.5);
+
+// Random integer
+const amount = ctx.rng.nextU32();
+
+// Random float [0, 1)
+const factor = ctx.rng.nextFloat();
+
+// Random from range
+const index = ctx.rng.range(0, items.length);
+```
+
+---
+
+## CLI Reference
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `agentforge init [path]` | Initialize simulation folder structure |
+| `agentforge run <scenario>` | Execute a scenario file |
+| `agentforge run --toy` | Run built-in toy scenario |
+| `agentforge doctor` | Check environment dependencies |
+| `agentforge types` | Generate TypeScript types from Foundry artifacts |
+
+### Run Options
+
+```bash
+agentforge run scenario.ts [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--seed <n>` | Override random seed |
+| `--ticks <n>` | Override tick count |
+| `--out <dir>` | Output directory (default: `sim/results`) |
+| `--ci` | CI mode: no colors, stable paths |
+| `--verbose` | Enable verbose logging |
+| `--quiet` | Suppress non-error output |
+
+### Examples
+
+```bash
+# Run with custom seed
+agentforge run sim/scenarios/stress.ts --seed 12345
+
+# Run for more ticks
+agentforge run sim/scenarios/stress.ts --ticks 1000
+
+# CI-friendly output
+agentforge run sim/scenarios/stress.ts --ci --out ./artifacts
+```
+
+---
+
+## Output
+
+Each simulation run produces artifacts:
+
+```
+results/<timestamp>-<scenario>/
+├── summary.json          # Metadata, final metrics, assertion results
+├── metrics.csv           # Time-series data for analysis
+├── actions.ndjson        # Every action (newline-delimited JSON)
+├── config_resolved.json  # Final resolved configuration
+└── run.log               # Structured execution logs
+```
+
+### Summary JSON
+
+```json
+{
+  "scenario": "market-stress",
+  "seed": 42,
+  "ticks": 100,
+  "duration_ms": 1234,
+  "metrics": {
+    "totalVolume": 15234.56,
+    "successRate": 0.95
+  },
+  "assertions": {
+    "passed": 2,
+    "failed": 0
+  }
+}
+```
+
+### Metrics CSV
+
+```csv
+tick,timestamp,totalVolume,avgPrice,activeAgents
+1,1706400000,100.5,100.2,15
+2,1706403600,205.3,101.1,15
+...
+```
+
+---
+
+## Examples
+
+See the [examples/](examples/) directory:
+
+| Example | Description |
+|---------|-------------|
+| `basic-simulation/` | Minimal setup with built-in agents |
+| `custom-agent/` | Memory, cooldowns, and custom behavior |
+| `assertions/` | Validation and failure handling |
+| `metrics-tracking/` | CSV analysis and statistics |
+
+Run any example:
+
+```bash
+agentforge run examples/basic-simulation/scenario.ts
+```
+
+---
+
+## Testing Integration
+
+AgentForge works great in CI pipelines:
+
+```yaml
+# .github/workflows/simulation.yml
+- name: Run simulations
+  run: |
+    npx agentforge run sim/scenarios/regression.ts --ci
+    npx agentforge run sim/scenarios/stress.ts --ci --seed 42
+```
+
+Use assertions to fail CI on invariant violations:
+
+```typescript
+assertions: [
+  { type: 'gte', metric: 'successRate', value: 0.95 },
+  { type: 'lte', metric: 'maxSlippage', value: 0.05 },
+]
+```
+
+---
+
+## API Reference
 
 ### Core Exports
 
@@ -232,344 +520,63 @@ sim/results/<run-id>/
 import {
   // Scenario definition
   defineScenario,
-  loadScenario,
   
-  // Engine
-  SimulationEngine,
-  runScenario,
-  
-  // Agents
+  // Agent base class
   BaseAgent,
-  NoOpAgent,
   
-  // Utilities
-  Rng,
-  Scheduler,
-  createScheduler,
-  MetricsCollector,
-  ArtifactsWriter,
-  createLogger,
+  // Types
+  type Scenario,
+  type Action,
+  type TickContext,
+  type Pack,
   
-  // Error handling
-  AgentForgeError,
-  RevertError,
-  RpcError,
-  TimeoutError,
-  NonceError,
-  ConfigurationError,
-  PreconditionError,
-  
-  // Preconditions
-  hasBalance,
-  hasAllowance,
-  withinTimeWindow,
-  notOnCooldown,
-  preconditions,
-  
-  // Schema validation
-  validateScenarioConfig,
-  validateRunOptions,
+  // Engine (advanced)
+  SimulationEngine,
 } from 'agentforge';
 ```
 
-### Type Exports
+### Adapters
 
 ```typescript
-import type {
-  Scenario,
-  RunOptions,
-  RunResult,
-  Action,
-  ActionResult,
-  ActionEvent,
-  TickContext,
-  Pack,
-  WorldState,
-  AgentStats,
-  AgentConfig,
-  MetricsConfig,
-  MetricsSample,
-  Assertion,
-  FailedAssertion,
-  RecordedAction,
-} from 'agentforge';
-```
-
-## Scenario Configuration Reference
-
-### Full Scenario Schema
-
-```typescript
-interface Scenario {
-  // Required fields
-  name: string;           // Unique scenario identifier
-  seed: number;           // Random seed for determinism
-  ticks: number;          // Total simulation steps
-  tickSeconds: number;    // Simulated seconds per tick
-  pack: Pack;             // Protocol-specific bindings
-  agents: AgentConfig[];  // Agent type configurations
+import {
+  // Anvil integration
+  AnvilAdapter,
   
-  // Optional fields
-  metrics?: {
-    sampleEveryTicks: number;  // Sample interval (default: 1)
-    track?: string[];          // Specific metrics to track
-  };
-  assertions?: Assertion[];    // Post-run validation rules
-}
+  // Viem utilities
+  createViemClient,
+} from 'agentforge/adapters';
 ```
 
-### Agent Configuration
+### Toy Simulation (Development/Testing)
 
 ```typescript
-interface AgentConfig {
-  type: typeof BaseAgent;          // Agent class constructor
-  count: number;                   // Number of instances to create
-  params?: Record<string, unknown>; // Parameters passed to constructor
-}
+import {
+  ToyPack,
+  RandomTraderAgent,
+  MomentumAgent,
+  MarketMakerAgent,
+} from 'agentforge/toy';
 ```
-
-### Assertions
-
-Assertions validate conditions at the end of a simulation:
-
-```typescript
-interface Assertion {
-  type: 'eq' | 'gt' | 'gte' | 'lt' | 'lte';  // Comparison type
-  metric: string;                             // Metric name to check
-  value: number | string;                     // Expected value
-}
-
-// Examples
-const assertions = [
-  { type: 'gt', metric: 'totalVolume', value: 1000 },
-  { type: 'gte', metric: 'successRate', value: 0.9 },
-  { type: 'lt', metric: 'maxDrawdown', value: 0.2 },
-  { type: 'eq', metric: 'errorCount', value: 0 },
-];
-```
-
-## Agent Authoring Guide
-
-### Basic Agent Structure
-
-```typescript
-import { BaseAgent, type Action, type TickContext } from 'agentforge';
-
-export class MyAgent extends BaseAgent {
-  // Called once when simulation starts
-  async initialize(ctx: TickContext): Promise<void> {
-    this.remember('initialBalance', ctx.world.balance);
-  }
-  
-  // Called every tick - decide what action to take
-  async step(ctx: TickContext): Promise<Action | null> {
-    // Access parameters passed in scenario config
-    const threshold = this.getParam('threshold', 100);
-    
-    // Use deterministic RNG
-    if (ctx.rng.chance(0.3)) {
-      return this.createAction('buy', ctx.tick, { amount: 100 });
-    }
-    
-    return null; // Skip this tick
-  }
-  
-  // Called once when simulation ends
-  async cleanup(): Promise<void> {
-    // Clean up any resources
-  }
-  
-  private createAction(name: string, tick: number, params: Record<string, unknown>): Action {
-    return {
-      id: this.generateActionId(name, tick),
-      name,
-      params,
-    };
-  }
-}
-```
-
-### Using Agent Memory
-
-Agents can persist state between ticks using the memory system:
-
-```typescript
-class StatefulAgent extends BaseAgent {
-  async step(ctx: TickContext): Promise<Action | null> {
-    // Store values in memory
-    this.remember('lastPrice', ctx.world.price);
-    this.remember('tickCount', (this.recall('tickCount') ?? 0) + 1);
-    
-    // Retrieve values from memory
-    const previousPrice = this.recall<number>('previousPrice');
-    const history = this.recall<number[]>('priceHistory', []);
-    
-    // Check if memory exists
-    if (this.hasMemory('initialized')) {
-      // ...
-    }
-    
-    // Clear specific or all memory
-    this.forget('tempValue');
-    this.clearMemory();
-    
-    return null;
-  }
-}
-```
-
-### Using Cooldowns
-
-Prevent agents from spamming actions:
-
-```typescript
-class CooldownAgent extends BaseAgent {
-  async step(ctx: TickContext): Promise<Action | null> {
-    // Check if action is available
-    if (this.isOnCooldown('buy', ctx.tick)) {
-      const remaining = this.getCooldownRemaining('buy', ctx.tick);
-      ctx.logger.debug(`Buy on cooldown for ${remaining} more ticks`);
-      return null;
-    }
-    
-    // Set cooldown after action
-    this.setCooldown('buy', 5, ctx.tick); // Can't buy for 5 ticks
-    
-    return {
-      id: this.generateActionId('buy', ctx.tick),
-      name: 'buy',
-      params: { amount: 100 },
-    };
-  }
-}
-```
-
-### Using Preconditions
-
-Check conditions before taking actions:
-
-```typescript
-import { hasBalance, withinTimeWindow, preconditions } from 'agentforge';
-
-class PreconditionAgent extends BaseAgent {
-  async step(ctx: TickContext): Promise<Action | null> {
-    // Individual precondition checks
-    const balanceCheck = hasBalance(ctx.world, this.id, 'ETH', 1000n);
-    if (!balanceCheck.passed) {
-      ctx.logger.debug(balanceCheck.message);
-      return null;
-    }
-    
-    // Fluent API for multiple checks
-    const check = preconditions()
-      .hasBalance(ctx.world, this.id, 'TOKEN', 100n)
-      .withinTimeWindow(ctx, 1000, 5000)
-      .notOnCooldown(this.cooldowns, 'trade', ctx.tick)
-      .check();
-    
-    if (!check.passed) {
-      return null;
-    }
-    
-    return this.createTradeAction(ctx);
-  }
-}
-```
-
-### RNG Methods
-
-The `Rng` class provides deterministic random number generation:
-
-```typescript
-class RandomAgent extends BaseAgent {
-  async step(ctx: TickContext): Promise<Action | null> {
-    const { rng } = ctx;
-    
-    // Random float [0, 1)
-    const float = rng.nextFloat();
-    
-    // Random integer [0, max)
-    const int = rng.nextU32() % 100;
-    
-    // Boolean with probability
-    if (rng.chance(0.3)) { /* 30% chance */ }
-    
-    // Pick from array
-    const action = rng.pickOne(['buy', 'sell', 'hold']);
-    
-    // Weighted selection
-    const weighted = rng.weightedPick([
-      { item: 'buy', weight: 0.5 },
-      { item: 'sell', weight: 0.3 },
-      { item: 'hold', weight: 0.2 },
-    ]);
-    
-    // Gaussian distribution
-    const gaussian = rng.nextGaussian(100, 15); // mean=100, stddev=15
-    
-    // Shuffle array (returns new array)
-    const shuffled = rng.shuffle([1, 2, 3, 4, 5]);
-    
-    return null;
-  }
-}
-```
-
-### Running Programmatically
-
-```typescript
-import { SimulationEngine, defineScenario } from 'agentforge';
-import { ToyPack, RandomTraderAgent } from 'agentforge/toy';
-
-const scenario = defineScenario({
-  name: 'programmatic-test',
-  seed: 123,
-  ticks: 50,
-  tickSeconds: 3600,
-  pack: new ToyPack(),
-  agents: [{ type: RandomTraderAgent, count: 5 }],
-});
-
-const engine = new SimulationEngine();
-const result = await engine.run(scenario, {
-  outDir: './my-results',
-  verbose: true,
-});
-
-console.log(`Success: ${result.success}`);
-console.log(`Final metrics:`, result.finalMetrics);
-```
-
-## Determinism
-
-AgentForge guarantees deterministic simulations:
-
-- Same seed + same scenario = identical results
-- Agent execution order is shuffled deterministically per tick
-- All randomness derives from the seeded RNG
-
-This enables:
-- Reproducible bug investigations
-- CI regression testing
-- Monte Carlo simulations with different seeds
-
-## Phase 2 (Coming Soon)
-
-Phase 2 will add:
-
-- **Foundry integration** - Auto-detect `foundry.toml`, parse artifacts
-- **Anvil control** - Spawn/manage local nodes, time manipulation
-- **Real contract packs** - Deploy and interact with actual Solidity contracts
-- **Type generation** - Generate Viem types from Foundry artifacts
-
-## Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-Built by [wkyleg.eth](https://github.com/wkyleg) | Originally developed for [Elata Protocol](https://github.com/elata-protocol)
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
+- Development setup
+- Code style guidelines
+- Testing requirements
+- Pull request process
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+<p align="center">
+  <sub>Built by <a href="https://github.com/wkyleg">wkyleg.eth</a> • Star this repo if you find it useful!</sub>
+</p>

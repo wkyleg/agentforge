@@ -92,6 +92,8 @@ export type {
   AgentStats,
   RecordedAction,
   MetricsSample,
+  Address,
+  FundingConfig,
 } from './core/types.js';
 
 export type {
@@ -115,3 +117,36 @@ export type {
   ActionInput,
   ActionResultInput,
 } from './core/schemas.js';
+
+// Utility exports
+export {
+  type Statistics,
+  type ConfidenceInterval,
+  type AggregatedMetrics,
+  calculateStatistics,
+  mean,
+  standardDeviation,
+  median,
+  percentile,
+  calculateConfidenceInterval,
+  aggregateMetrics,
+  successRate,
+  ratePerTime,
+  ratePerTick,
+  simpleMovingAverage,
+  exponentialMovingAverage,
+} from './utils/statistics.js';
+
+// Testing helper exports
+export {
+  assertGte,
+  assertLte,
+  assertEqual,
+  assertNotEqual,
+  assertAgentSuccess,
+  assertEconomics,
+  formatNumber,
+  formatDuration,
+  formatPercent,
+  summarizeResult,
+} from './testing/helpers.js';

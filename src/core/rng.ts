@@ -30,6 +30,9 @@ export class Rng {
 
   /**
    * Create a new RNG with a derived seed for a specific tick and agent
+   * @param tick - The current tick number
+   * @param agentId - Optional agent ID for additional seed entropy
+   * @returns A new RNG instance with a derived seed
    */
   derive(tick: number, agentId?: string): Rng {
     let derivedSeed = Number(this.state0 & 0xffffffffn) ^ tick;
@@ -60,6 +63,7 @@ export class Rng {
 
   /**
    * Generate a random 32-bit unsigned integer
+   * @returns A random integer in [0, 2^32 - 1]
    */
   nextU32(): number {
     return Number(this.next() & 0xffffffffn);
@@ -67,6 +71,7 @@ export class Rng {
 
   /**
    * Generate a random float in [0, 1)
+   * @returns A random float in the range [0, 1)
    */
   nextFloat(): number {
     // Use 53 bits for full double precision
@@ -76,6 +81,10 @@ export class Rng {
 
   /**
    * Generate a random integer in [min, max] (inclusive)
+   * @param min - Minimum value (inclusive)
+   * @param max - Maximum value (inclusive)
+   * @returns A random integer in the range [min, max]
+   * @throws Error if min > max
    */
   nextInt(min: number, max: number): number {
     if (min > max) {
@@ -87,6 +96,9 @@ export class Rng {
 
   /**
    * Pick a random element from an array
+   * @param arr - The array to pick from
+   * @returns A randomly selected element
+   * @throws Error if the array is empty
    */
   pickOne<T>(arr: readonly T[]): T {
     if (arr.length === 0) {
@@ -99,6 +111,9 @@ export class Rng {
 
   /**
    * Pick a random element using weighted probabilities
+   * @param items - Array of items with their weights
+   * @returns A randomly selected item based on weights
+   * @throws Error if the array is empty or total weight is not positive
    */
   weightedPick<T>(items: readonly { item: T; weight: number }[]): T {
     if (items.length === 0) {
@@ -126,6 +141,8 @@ export class Rng {
 
   /**
    * Shuffle an array in place using Fisher-Yates algorithm
+   * @param arr - The array to shuffle (modified in place)
+   * @returns The same array, shuffled
    */
   shuffle<T>(arr: T[]): T[] {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -138,6 +155,8 @@ export class Rng {
 
   /**
    * Return true with the given probability
+   * @param probability - The probability of returning true (0 to 1)
+   * @returns True with the given probability
    */
   chance(probability: number): boolean {
     return this.nextFloat() < probability;
@@ -145,6 +164,7 @@ export class Rng {
 
   /**
    * Generate a random boolean
+   * @returns True or false with equal probability
    */
   nextBool(): boolean {
     return this.chance(0.5);

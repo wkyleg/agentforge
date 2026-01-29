@@ -106,6 +106,7 @@ export abstract class BaseAgent {
 
   /**
    * Get agent statistics
+   * @returns Basic statistics about agent performance
    */
   getStats(): AgentStats {
     return {
@@ -119,6 +120,7 @@ export abstract class BaseAgent {
 
   /**
    * Get extended agent statistics including memory and cooldowns
+   * @returns Extended statistics including memory keys and active cooldowns
    */
   getExtendedStats(): ExtendedAgentStats {
     return {
@@ -133,6 +135,14 @@ export abstract class BaseAgent {
 
   /**
    * Get a parameter value with type safety
+   * @param key - The parameter key to retrieve
+   * @param defaultValue - Default value if parameter is not set
+   * @returns The parameter value or default
+   * @example
+   * ```typescript
+   * const threshold = this.getParam<number>('threshold', 0.5);
+   * const name = this.getParam<string>('name', 'default');
+   * ```
    */
   protected getParam<T>(key: string, defaultValue: T): T {
     const value = this.params[key];
@@ -144,6 +154,9 @@ export abstract class BaseAgent {
 
   /**
    * Generate a unique action ID
+   * @param actionName - The name of the action
+   * @param tick - The current tick number
+   * @returns A unique identifier for the action
    */
   protected generateActionId(actionName: string, tick: number): string {
     return `${this.id}-${actionName}-${tick}-${Date.now()}`;
@@ -153,6 +166,8 @@ export abstract class BaseAgent {
 
   /**
    * Store a value in agent memory
+   * @param key - The key to store the value under
+   * @param value - The value to store
    */
   protected remember<T>(key: string, value: T): void {
     this.memory[key] = value;
@@ -160,6 +175,9 @@ export abstract class BaseAgent {
 
   /**
    * Retrieve a value from agent memory
+   * @param key - The key to retrieve
+   * @param defaultValue - Optional default value if key doesn't exist
+   * @returns The stored value or undefined/default
    */
   protected recall<T>(key: string, defaultValue?: T): T | undefined {
     const value = this.memory[key];
@@ -171,6 +189,8 @@ export abstract class BaseAgent {
 
   /**
    * Check if a key exists in memory
+   * @param key - The key to check
+   * @returns True if the key exists in memory
    */
   protected hasMemory(key: string): boolean {
     return key in this.memory;
@@ -255,6 +275,7 @@ export abstract class BaseAgent {
 
   /**
    * Get the last tick this agent was executed
+   * @returns The tick number of last execution, or -1 if never executed
    */
   getLastTick(): number {
     return this._lastTick;
@@ -270,6 +291,8 @@ export abstract class BaseAgent {
 
   /**
    * Get number of ticks since last execution
+   * @param currentTick - The current tick number
+   * @returns Number of ticks since last execution
    */
   protected getTicksSinceLastExecution(currentTick: number): number {
     if (this._lastTick < 0) {

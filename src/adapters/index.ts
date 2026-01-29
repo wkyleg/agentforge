@@ -1,8 +1,10 @@
 /**
  * Adapters for external tools and services
  *
- * Phase 1: Stubs with basic functionality
- * Phase 2: Full implementations
+ * Provides integration with:
+ * - Anvil (local Ethereum node)
+ * - Foundry (build and deployment tools)
+ * - Viem (EVM client library)
  */
 
 // Anvil adapter
@@ -12,6 +14,12 @@ export {
   spawnAnvil,
   stopAnvil,
   anvilRpc,
+  advanceTime,
+  advanceToTimestamp,
+  fundAccounts,
+  createTestAnvilConfig,
+  DEFAULT_ANVIL_CONFIG,
+  DEFAULT_ANVIL_MNEMONIC,
 } from './anvil.js';
 export type { AnvilConfig, AnvilInstance } from './anvil.js';
 
@@ -23,13 +31,24 @@ export {
   getFoundryVersion,
   parseFoundryConfig,
   forgeBuild,
-  loadArtifact,
-  listArtifacts,
+  forgeClean,
+  forgeTest,
   forgeScript,
+  loadArtifact,
+  loadArtifacts,
+  listArtifacts,
   parseBroadcast,
   getDeployedAddresses,
+  getAllDeployedAddresses,
+  generateTypes,
+  DEFAULT_FOUNDRY_CONFIG,
 } from './foundry.js';
-export type { FoundryConfig, ContractArtifact, BroadcastTransaction } from './foundry.js';
+export type {
+  FoundryConfig,
+  ContractArtifact,
+  BroadcastTransaction,
+  ForgeScriptOptions,
+} from './foundry.js';
 
 // Viem adapter
 export {
