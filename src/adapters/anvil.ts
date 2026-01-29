@@ -9,11 +9,11 @@
  * - Account impersonation (anvil_impersonateAccount)
  */
 
-import { type ChildProcess, spawn, exec } from 'node:child_process';
+import { type ChildProcess, exec, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import { HDKey } from '@scure/bip32';
 import { mnemonicToSeedSync } from '@scure/bip39';
-import { createPublicClient, http, type PublicClient } from 'viem';
+import { http, type PublicClient, createPublicClient } from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
 
 const execAsync = promisify(exec);
@@ -80,7 +80,16 @@ export interface AnvilInstance {
  * Default Anvil configuration
  */
 export const DEFAULT_ANVIL_CONFIG: Required<
-  Omit<AnvilConfig, 'forkUrl' | 'forkBlockNumber' | 'mnemonic' | 'baseFee' | 'gasLimit' | 'gasPrice' | 'codeSizeLimit'>
+  Omit<
+    AnvilConfig,
+    | 'forkUrl'
+    | 'forkBlockNumber'
+    | 'mnemonic'
+    | 'baseFee'
+    | 'gasLimit'
+    | 'gasPrice'
+    | 'codeSizeLimit'
+  >
 > = {
   port: 8545,
   chainId: 31337,
@@ -94,8 +103,7 @@ export const DEFAULT_ANVIL_CONFIG: Required<
 /**
  * Default mnemonic used by Anvil
  */
-export const DEFAULT_ANVIL_MNEMONIC =
-  'test test test test test test test test test test test junk';
+export const DEFAULT_ANVIL_MNEMONIC = 'test test test test test test test test test test test junk';
 
 /**
  * Check if Anvil is installed
@@ -408,11 +416,7 @@ export async function stopAnvil(instance: AnvilInstance): Promise<void> {
 /**
  * Make a JSON-RPC call to Anvil
  */
-async function rpcCall<T>(
-  url: string,
-  method: string,
-  params: unknown[] = []
-): Promise<T> {
+async function rpcCall<T>(url: string, method: string, params: unknown[] = []): Promise<T> {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -512,12 +516,7 @@ export const anvilRpc = {
   /**
    * Set a storage slot value
    */
-  async setStorageAt(
-    url: string,
-    address: string,
-    slot: string,
-    value: string
-  ): Promise<void> {
+  async setStorageAt(url: string, address: string, slot: string, value: string): Promise<void> {
     await rpcCall(url, 'anvil_setStorageAt', [address, slot, value]);
   },
 
@@ -608,12 +607,7 @@ export const anvilRpc = {
   /**
    * Deal ERC20 tokens to an address (if supported by the token)
    */
-  async deal(
-    url: string,
-    tokenAddress: string,
-    toAddress: string,
-    amount: bigint
-  ): Promise<void> {
+  async deal(url: string, tokenAddress: string, toAddress: string, amount: bigint): Promise<void> {
     // This uses storage manipulation to set balance
     // Standard ERC20 balanceOf slot calculation
     const slot = await calculateBalanceSlot(toAddress);
@@ -631,7 +625,7 @@ function calculateBalanceSlot(address: string): string {
   // where . is concatenation and values are padded to 32 bytes
   const paddedAddress = address.toLowerCase().replace('0x', '').padStart(64, '0');
   const paddedSlot = '0'.padStart(64, '0');
-  
+
   // In practice, this varies by contract implementation
   // Most ERC20s use slot 0 for balances, but some use different slots
   // For accurate manipulation, you'd need to know the contract's storage layout
@@ -688,10 +682,6 @@ export async function advanceToTimestamp(url: string, timestamp: number): Promis
  * @param accounts - Array of addresses to fund
  * @param amount - Amount in wei to give each account
  */
-export async function fundAccounts(
-  url: string,
-  accounts: string[],
-  amount: bigint
-): Promise<void> {
+export async function fundAccounts(url: string, accounts: string[], amount: bigint): Promise<void> {
   await Promise.all(accounts.map((account) => anvilRpc.setBalance(url, account, amount)));
 }

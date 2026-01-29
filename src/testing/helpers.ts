@@ -19,7 +19,7 @@ export function assertGte(metric: string, value: number, message?: string): Asse
     type: 'gte',
     metric,
     value,
-    message: message ?? 'Metric ' + metric + ' should be >= ' + value,
+    message: message ?? `Metric ${metric} should be >= ${value}`,
   };
 }
 
@@ -31,7 +31,7 @@ export function assertLte(metric: string, value: number, message?: string): Asse
     type: 'lte',
     metric,
     value,
-    message: message ?? 'Metric ' + metric + ' should be <= ' + value,
+    message: message ?? `Metric ${metric} should be <= ${value}`,
   };
 }
 
@@ -43,7 +43,7 @@ export function assertEqual(metric: string, value: number, message?: string): As
     type: 'eq',
     metric,
     value,
-    message: message ?? 'Metric ' + metric + ' should equal ' + value,
+    message: message ?? `Metric ${metric} should equal ${value}`,
   };
 }
 
@@ -55,7 +55,7 @@ export function assertNotEqual(metric: string, value: number, message?: string):
     type: 'neq',
     metric,
     value,
-    message: message ?? 'Metric ' + metric + ' should not equal ' + value,
+    message: message ?? `Metric ${metric} should not equal ${value}`,
   };
 }
 
@@ -76,14 +76,14 @@ export function assertAgentSuccess(
   for (const agent of agents) {
     const rate = successRate(agent.actionsSucceeded, agent.actionsAttempted);
     if (rate < minSuccessRate) {
-      failingAgents.push(agent.id + ' (' + Math.round(rate * 100) + '%)');
+      failingAgents.push(`${agent.id} (${Math.round(rate * 100)}%)`);
     }
   }
 
   if (failingAgents.length > 0) {
     return {
       passed: false,
-      message: 'Agents below ' + Math.round(minSuccessRate * 100) + '% success: ' + failingAgents.join(', '),
+      message: `Agents below ${Math.round(minSuccessRate * 100)}% success: ${failingAgents.join(', ')}`,
     };
   }
 
@@ -110,7 +110,7 @@ export function assertEconomics(
     const fees = result.finalMetrics.fees_collected_total;
     const feesNum = typeof fees === 'bigint' ? Number(fees) : Number(fees ?? 0);
     if (feesNum < options.minFees) {
-      failures.push('Fees ' + feesNum + ' below minimum ' + options.minFees);
+      failures.push(`Fees ${feesNum} below minimum ${options.minFees}`);
     }
   }
 
@@ -118,7 +118,7 @@ export function assertEconomics(
     const gas = result.finalMetrics.gas_total;
     const gasNum = typeof gas === 'bigint' ? Number(gas) : Number(gas ?? 0);
     if (gasNum > options.maxGas) {
-      failures.push('Gas ' + gasNum + ' exceeds maximum ' + options.maxGas);
+      failures.push(`Gas ${gasNum} exceeds maximum ${options.maxGas}`);
     }
   }
 
@@ -146,11 +146,13 @@ export function formatNumber(value: number | bigint): string {
   const num = typeof value === 'bigint' ? Number(value) : value;
 
   if (num >= 1_000_000_000) {
-    return (num / 1_000_000_000).toFixed(2) + 'B';
-  } else if (num >= 1_000_000) {
-    return (num / 1_000_000).toFixed(2) + 'M';
-  } else if (num >= 1_000) {
-    return (num / 1_000).toFixed(2) + 'K';
+    return `${(num / 1_000_000_000).toFixed(2)}B`;
+  }
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(2)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(2)}K`;
   }
   return num.toLocaleString();
 }
@@ -162,22 +164,24 @@ export function formatDuration(ms: number): string {
   if (ms >= 3_600_000) {
     const hours = Math.floor(ms / 3_600_000);
     const minutes = Math.floor((ms % 3_600_000) / 60_000);
-    return hours + 'h ' + minutes + 'm';
-  } else if (ms >= 60_000) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (ms >= 60_000) {
     const minutes = Math.floor(ms / 60_000);
     const seconds = Math.floor((ms % 60_000) / 1000);
-    return minutes + 'm ' + seconds + 's';
-  } else if (ms >= 1_000) {
-    return (ms / 1_000).toFixed(1) + 's';
+    return `${minutes}m ${seconds}s`;
   }
-  return ms + 'ms';
+  if (ms >= 1_000) {
+    return `${(ms / 1_000).toFixed(1)}s`;
+  }
+  return `${ms}ms`;
 }
 
 /**
  * Format percentage
  */
 export function formatPercent(value: number, decimals = 1): string {
-  return (value * 100).toFixed(decimals) + '%';
+  return `${(value * 100).toFixed(decimals)}%`;
 }
 
 // ============================================
@@ -191,9 +195,9 @@ export function summarizeResult(result: RunResult): string {
   const lines: string[] = [];
 
   lines.push('=== Simulation Result ===');
-  lines.push('Status: ' + (result.success ? 'PASS' : 'FAIL'));
-  lines.push('Duration: ' + formatDuration(result.durationMs));
-  lines.push('Ticks: ' + (result.ticks ?? 'N/A'));
+  lines.push(`Status: ${result.success ? 'PASS' : 'FAIL'}`);
+  lines.push(`Duration: ${formatDuration(result.durationMs)}`);
+  lines.push(`Ticks: ${result.ticks ?? 'N/A'}`);
   lines.push('');
 
   // Agent stats
@@ -201,7 +205,7 @@ export function summarizeResult(result: RunResult): string {
   const totalAttempted = result.agentStats.reduce((s, a) => s + a.actionsAttempted, 0);
   const totalSucceeded = result.agentStats.reduce((s, a) => s + a.actionsSucceeded, 0);
   const overallRate = successRate(totalSucceeded, totalAttempted);
-  lines.push('  Total: ' + totalSucceeded + '/' + totalAttempted + ' (' + formatPercent(overallRate) + ')');
+  lines.push(`  Total: ${totalSucceeded}/${totalAttempted} (${formatPercent(overallRate)})`);
 
   // Group by type
   const byType = new Map<string, { attempted: number; succeeded: number }>();
@@ -215,7 +219,7 @@ export function summarizeResult(result: RunResult): string {
 
   for (const [type, stats] of byType) {
     const rate = successRate(stats.succeeded, stats.attempted);
-    lines.push('  ' + type + ': ' + formatPercent(rate));
+    lines.push(`  ${type}: ${formatPercent(rate)}`);
   }
 
   lines.push('');
@@ -226,7 +230,7 @@ export function summarizeResult(result: RunResult): string {
     const value = result.finalMetrics[key];
     if (value !== undefined) {
       const formatted = typeof value === 'bigint' ? formatNumber(value) : String(value);
-      lines.push('  ' + key + ': ' + formatted);
+      lines.push(`  ${key}: ${formatted}`);
     }
   }
 
@@ -235,7 +239,7 @@ export function summarizeResult(result: RunResult): string {
     lines.push('');
     lines.push('Failed Assertions:');
     for (const assertion of result.failedAssertions) {
-      lines.push('  - ' + assertion.message);
+      lines.push(`  - ${assertion.message}`);
     }
   }
 

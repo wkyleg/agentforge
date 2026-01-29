@@ -115,7 +115,7 @@ export function defineScenario(options: DefineScenarioOptions): Scenario {
 /**
  * Create a scenario from a TypeScript or JavaScript file path
  * Used by CLI to dynamically load scenarios
- * 
+ *
  * For TypeScript files, this uses tsx to load the module.
  * @param path - File URL or path to the scenario file
  * @returns The loaded scenario
@@ -124,13 +124,13 @@ export async function loadScenario(path: string): Promise<Scenario> {
   try {
     // Check if this is a TypeScript file
     const isTypeScript = path.endsWith('.ts') || path.includes('.ts?');
-    
+
     let module: Record<string, unknown>;
-    
+
     if (isTypeScript) {
       // Use tsx to load TypeScript files
       const { tsImport } = await import('tsx/esm/api');
-      module = await tsImport(path, import.meta.url) as Record<string, unknown>;
+      module = (await tsImport(path, import.meta.url)) as Record<string, unknown>;
     } else {
       // Use native import for JavaScript files
       module = await import(path);

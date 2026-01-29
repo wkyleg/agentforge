@@ -130,11 +130,7 @@ export interface FundingConfig {
    * @param amount - Amount to fund
    * @param deployerWallet - Wallet client for the deployer (for signing transactions)
    */
-  customFunder?: (
-    toAddress: Address,
-    amount: bigint,
-    deployerWallet: unknown
-  ) => Promise<void>;
+  customFunder?: (toAddress: Address, amount: bigint, deployerWallet: unknown) => Promise<void>;
 }
 
 /**

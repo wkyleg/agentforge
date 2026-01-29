@@ -134,7 +134,6 @@ export class MetricsCollector {
     }
 
     // Get all metric keys from first sample
-    // biome-ignore lint/style/noNonNullAssertion: length check above
     const metricKeys = Object.keys(this.samples[0]!.metrics);
     const headers = ['tick', 'timestamp', ...metricKeys];
 

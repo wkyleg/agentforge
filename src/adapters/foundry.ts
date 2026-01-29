@@ -437,10 +437,7 @@ export async function loadArtifact(
 /**
  * Find artifact file in out directory
  */
-async function findArtifactFile(
-  outDir: string,
-  contractName: string
-): Promise<string | null> {
+async function findArtifactFile(outDir: string, contractName: string): Promise<string | null> {
   // First, try direct path: out/ContractName.sol/ContractName.json
   const directPath = join(outDir, `${contractName}.sol`, `${contractName}.json`);
   try {
@@ -855,7 +852,7 @@ export async function forgeTest(
   }
 
   if (options?.verbosity) {
-    args.push('-' + 'v'.repeat(options.verbosity));
+    args.push(`-${'v'.repeat(options.verbosity)}`);
   }
 
   if (options?.gas) {

@@ -46,13 +46,11 @@ export function calculateStatistics(values: number[]): Statistics {
   const sorted = [...values].sort((a, b) => a - b);
 
   const mean = values.reduce((sum, v) => sum + v, 0) / n;
-  const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / n;
+  const variance = values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / n;
   const stdDev = Math.sqrt(variance);
 
   const median =
-    n % 2 === 0
-      ? (sorted[n / 2 - 1]! + sorted[n / 2]!) / 2
-      : sorted[Math.floor(n / 2)]!;
+    n % 2 === 0 ? (sorted[n / 2 - 1]! + sorted[n / 2]!) / 2 : sorted[Math.floor(n / 2)]!;
 
   // 95% confidence interval using t-distribution approximation
   const tValue = 1.96;
@@ -87,7 +85,7 @@ export function mean(values: number[]): number {
 export function standardDeviation(values: number[]): number {
   if (values.length === 0) return 0;
   const avg = mean(values);
-  const squaredDiffs = values.map((v) => Math.pow(v - avg, 2));
+  const squaredDiffs = values.map((v) => (v - avg) ** 2);
   return Math.sqrt(mean(squaredDiffs));
 }
 
@@ -98,9 +96,7 @@ export function median(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const n = sorted.length;
-  return n % 2 === 0
-    ? (sorted[n / 2 - 1]! + sorted[n / 2]!) / 2
-    : sorted[Math.floor(n / 2)]!;
+  return n % 2 === 0 ? (sorted[n / 2 - 1]! + sorted[n / 2]!) / 2 : sorted[Math.floor(n / 2)]!;
 }
 
 /**
@@ -164,7 +160,7 @@ export function calculateConfidenceInterval(
     zScore = 2.576;
   } else if (confidenceLevel >= 0.95) {
     zScore = 1.96;
-  } else if (confidenceLevel >= 0.90) {
+  } else if (confidenceLevel >= 0.9) {
     zScore = 1.645;
   } else {
     zScore = 1.96;
@@ -195,9 +191,7 @@ export interface AggregatedMetrics {
 /**
  * Aggregate metrics from multiple runs
  */
-export function aggregateMetrics(
-  runs: Array<Record<string, number | bigint>>
-): AggregatedMetrics {
+export function aggregateMetrics(runs: Array<Record<string, number | bigint>>): AggregatedMetrics {
   const allKeys = new Set<string>();
   for (const run of runs) {
     for (const key of Object.keys(run)) {

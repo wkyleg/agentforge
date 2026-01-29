@@ -11,11 +11,15 @@
         "noForEach": "off"
       },
       "style": {
-        "noNonNullAssertion": "warn",
+        "noNonNullAssertion": "off",
         "useConst": "error"
       },
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "off",
+        "noAssignInExpressions": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn"
       }
     }
   },
@@ -33,6 +37,6 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", "dist", "*.json", "*.md"]
+    "ignore": ["node_modules", "dist", "coverage", "docs"]
   }
 }

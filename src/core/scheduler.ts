@@ -87,9 +87,7 @@ export class Scheduler {
     }
 
     return agents.sort((a, b) => {
-      // biome-ignore lint/style/noNonNullAssertion: checked above
       const priorityA = this.priorityFn!(a);
-      // biome-ignore lint/style/noNonNullAssertion: checked above
       const priorityB = this.priorityFn!(b);
       return priorityB - priorityA; // Higher priority first
     });

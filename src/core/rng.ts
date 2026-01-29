@@ -105,7 +105,6 @@ export class Rng {
       throw new Error('Cannot pick from empty array');
     }
     const index = Math.floor(this.nextFloat() * arr.length);
-    // biome-ignore lint/style/noNonNullAssertion: length check above
     return arr[index]!;
   }
 
@@ -135,7 +134,6 @@ export class Rng {
     }
 
     // Fallback to last item (shouldn't happen with proper weights)
-    // biome-ignore lint/style/noNonNullAssertion: length check above
     return items[items.length - 1]!.item;
   }
 
@@ -147,7 +145,6 @@ export class Rng {
   shuffle<T>(arr: T[]): T[] {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(this.nextFloat() * (i + 1));
-      // biome-ignore lint/style/noNonNullAssertion: index is valid
       [arr[i], arr[j]] = [arr[j]!, arr[i]!];
     }
     return arr;
