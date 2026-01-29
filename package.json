@@ -1,5 +1,5 @@
 {
-  "name": "agentforge",
+  "name": "@elata-biosciences/agentforge",
   "version": "0.1.0",
   "description": "Type-safe agent-based simulation framework for Foundry/EVM protocols",
   "type": "module",
@@ -64,7 +64,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wkyleg/agentforge"
+    "url": "https://github.com/Elata-Biosciences/agentforge"
   },
   "engines": {
     "node": ">=18.0.0"

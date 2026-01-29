@@ -11,8 +11,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/agentforge"><img src="https://img.shields.io/npm/v/agentforge?color=orange" alt="npm version"></a>
-  <a href="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml"><img src="https://github.com/wkyleg/agentforge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/@elata-biosciences/agentforge"><img src="https://img.shields.io/npm/v/@elata-biosciences/agentforge?color=orange" alt="npm version"></a>
+  <a href="https://github.com/Elata-Biosciences/agentforge/actions/workflows/ci.yml"><img src="https://github.com/Elata-Biosciences/agentforge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
 
@@ -25,7 +25,7 @@ Traditional testing validates individual functions. Agent-based modeling validat
 ## Installation
 
 ```bash
-pnpm add agentforge
+pnpm add @elata-biosciences/agentforge
 ```
 
 Requirements: Node.js 18+ and [Foundry](https://book.getfoundry.sh/getting-started/installation) with Anvil for EVM simulations.
@@ -46,8 +46,8 @@ npx agentforge doctor
 ## Writing a Scenario
 
 ```typescript
-import { defineScenario } from 'agentforge';
-import { ToyPack, RandomTraderAgent, MomentumAgent } from 'agentforge/toy';
+import { defineScenario } from '@elata-biosciences/agentforge';
+import { ToyPack, RandomTraderAgent, MomentumAgent } from '@elata-biosciences/agentforge/toy';
 
 export default defineScenario({
   name: 'market-stress',
@@ -83,7 +83,7 @@ npx agentforge run sim/scenarios/market-stress.ts
 Extend `BaseAgent` and implement `step()`:
 
 ```typescript
-import { BaseAgent, type Action, type TickContext } from 'agentforge';
+import { BaseAgent, type Action, type TickContext } from '@elata-biosciences/agentforge';
 
 export class MyAgent extends BaseAgent {
   async step(ctx: TickContext): Promise<Action | null> {
@@ -171,14 +171,14 @@ Assertions fail CI on invariant violations.
 
 ```typescript
 // Core
-import { defineScenario, BaseAgent, SimulationEngine } from 'agentforge';
-import type { Scenario, Action, TickContext, Pack } from 'agentforge';
+import { defineScenario, BaseAgent, SimulationEngine } from '@elata-biosciences/agentforge';
+import type { Scenario, Action, TickContext, Pack } from '@elata-biosciences/agentforge';
 
 // Adapters
-import { spawnAnvil, createViemClient } from 'agentforge/adapters';
+import { spawnAnvil, createViemClient } from '@elata-biosciences/agentforge/adapters';
 
 // Toy simulation
-import { ToyPack, RandomTraderAgent, MomentumAgent } from 'agentforge/toy';
+import { ToyPack, RandomTraderAgent, MomentumAgent } from '@elata-biosciences/agentforge/toy';
 ```
 
 ## Contributing
