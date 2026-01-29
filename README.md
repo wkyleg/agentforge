@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="logo-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="logo-light.svg">
-    <img alt="AgentForge" src="logo-light.svg" width="560">
+    <img alt="AgentForge - Agent-based simulation framework for Foundry and EVM smart contracts" src="logo-light.svg" width="560">
   </picture>
 </p>
 
@@ -22,7 +22,9 @@
 
 AgentForge is an agent-based simulation framework for Foundry/EVM protocols. Define autonomous agents, run them against your smart contracts, and validate economic invariants with deterministic, reproducible results.
 
-Traditional testing validates individual functions. Agent-based modeling validates emergent system behavior—what happens when hundreds of users interact simultaneously? Does your AMM stay solvent under volatility? How do rational actors exploit edge cases?
+## Why Agent-Based Testing?
+
+Unit tests validate functions. Fuzz tests validate inputs. Agent-based modeling validates **emergent behavior**—how your protocol behaves when many users act simultaneously with different strategies.
 
 ## Installation
 
@@ -153,12 +155,13 @@ results/<scenario>-<timestamp>/
 
 ## Examples
 
-See [examples/](examples/) for working code:
+### DeFi Protocol Testing
+The `basic-simulation/` example shows how to simulate trading activity and validate market invariants.
 
-- `basic-simulation/` — Minimal setup
-- `custom-agent/` — Memory, cooldowns, custom logic
-- `assertions/` — Validation and failure handling
-- `metrics-tracking/` — CSV analysis
+### Custom Agent Strategies
+The `custom-agent/` example demonstrates memory, cooldowns, and complex decision logic.
+
+See [examples/](examples/) for all working code including `assertions/` and `metrics-tracking/`.
 
 ## CI Integration
 
@@ -182,6 +185,10 @@ import { spawnAnvil, createViemClient } from '@elata-biosciences/agentforge/adap
 // Toy simulation
 import { ToyPack, RandomTraderAgent, MomentumAgent } from '@elata-biosciences/agentforge/toy';
 ```
+
+## Used By
+
+- [Elata Protocol](https://github.com/Elata-Biosciences/elata-protocol) — App launchpad with bonding curves
 
 ## Contributing
 

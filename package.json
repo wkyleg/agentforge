@@ -58,7 +58,12 @@
     "simulation",
     "evm",
     "viem",
-    "testing"
+    "testing",
+    "smart-contract-testing",
+    "defi",
+    "protocol-testing",
+    "anvil",
+    "stress-testing"
   ],
   "author": "wkyleg.eth",
   "license": "MIT",
