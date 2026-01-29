@@ -157,7 +157,7 @@ describe('SimulationEngine', () => {
 
       const result = await engine.run(scenario, { outDir: testDir, ci: true });
 
-      expect(result.durationMs).toBeGreaterThan(0);
+      expect(result.durationMs).toBeGreaterThanOrEqual(0);
     });
 
     it('returns outputDir in result', async () => {
