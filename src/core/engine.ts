@@ -118,7 +118,9 @@ export class SimulationEngine {
     const agents = this.createAgents(scenario, rng);
 
     // Initialize agents
-    const initialTimestamp = Math.floor(Date.now() / 1000);
+    // Use deterministic timestamp for reproducibility
+    // Base timestamp (Nov 2023) + seed offset ensures different seeds get different but deterministic start times
+    const initialTimestamp = 1700000000 + (resolvedOptions.seed % 1000000);
     for (const agent of agents) {
       const ctx = this.createTickContext(0, initialTimestamp, rng, scenario);
       await agent.initialize(ctx);

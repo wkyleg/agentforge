@@ -112,7 +112,7 @@ export class ToyPack implements Pack {
       balances: new Map(),
       priceHistory,
       tick: 0,
-      timestamp: Math.floor(Date.now() / 1000),
+      timestamp: 0, // Will be set by engine's onTick
     };
   }
 
